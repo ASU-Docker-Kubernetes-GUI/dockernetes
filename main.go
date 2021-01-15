@@ -127,8 +127,6 @@ func main() {
 
 
 	server := newServer(&ctx)
-
 	server.createRoutes()
-
 	server.app.Listen(":8080")
 }
