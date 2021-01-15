@@ -15,6 +15,18 @@ type server struct {
 	app *fiber.App
 }
 
+func newServer(ctx *context.Context) *server {
+	dockerClient, err := docker.NewClientWithOpts(docker.FromEnv, docker.WithAPIVersionNegotiation())
+
+	if err != nil {
+		panic(err)
+	}
+
+	app := fiber.New()
+
+	return &server{ctx: ctx, dockerClient: dockerClient, app: app}
+}
+
 type StatusResponse struct {
 	TimeStamp time.Time `json:timestamp`
 	Message string `json:message`
@@ -30,13 +42,6 @@ type GetContainerResponse struct {
 	Container types.Container `json:container`
 }
 
-func startDocker() *docker.Client {
-	dockerClient, err := docker.NewClientWithOpts(docker.FromEnv, docker.WithAPIVersionNegotiation())
-	if err != nil {
-		panic(err)
-	}
-	return dockerClient
-}
 
 func getContainers(ctx context.Context, dockerClient *docker.Client) (*GetAllContainersResponse, error)  {
 	containers, err := dockerClient.ContainerList(ctx, types.ContainerListOptions{All: true})
@@ -50,7 +55,7 @@ func getContainers(ctx context.Context, dockerClient *docker.Client) (*GetAllCon
 	}, nil
 }
 
-func getContainer(ctx context.Context, dockerClient docker.Client, containerID string) (*GetContainerResponse, error) {
+func getContainer(ctx context.Context, dockerClient *docker.Client, containerID string) (*GetContainerResponse, error) {
 	containers, err := dockerClient.ContainerList(ctx, types.ContainerListOptions{All: true})
 	if err != nil {
 		return nil, errors.New("Unable to fetch container")
@@ -68,12 +73,36 @@ func getContainer(ctx context.Context, dockerClient docker.Client, containerID s
 	return nil, errors.New("Container could not be found")
 }
 
-func createRoutes(app *fiber.App, ctx *context.Context) fiber.Router {
-	group := app.Group("api/v1")
+func (s *server) createRoutes() fiber.Router {
+	group := s.app.Group("api/v1")
 	group.Get("/", handleGetStatus)
 
-	group.Get("/containers", handleGetAllContainers)
-	group.Get("/container/:id", handleGetContainer)
+	group.Get("/containers", func(ctx *fiber.Ctx) error {
+		response, err := getContainers(*s.ctx, s.dockerClient)
+
+		if err != nil {
+			return ctx.JSON(StatusResponse{
+				TimeStamp: time.Now(),
+				Message:   "Unable to get all containers",
+			})
+		}
+
+		return ctx.JSON(response)
+	})
+
+	group.Get("/container/:id", func(ctx *fiber.Ctx) error {
+		response, err := getContainer(*s.ctx, s.dockerClient, ctx.Params("id"))
+
+		if err != nil {
+			return ctx.JSON(StatusResponse{
+				TimeStamp: time.Now(),
+				Message:   "Unable to get all containers",
+			})
+		}
+
+		return ctx.JSON(response)
+	})
+
 	return group
 }
 
@@ -82,37 +111,24 @@ func handleGetContainer(ctx *fiber.Ctx) error {
 	return ctx.SendString("Sending container through here")
 }
 
-func (s *server) handleGetAllContainers(ctx *fiber.Ctx) error {
-	response, err := getContainers(*s.ctx, s.dockerClient)
-
-	if err != nil {
-		return ctx.JSON(StatusResponse{
-			TimeStamp: time.Now(),
-			Message:   "Unable to get all containers",
-		})
-	}
-
-	return ctx.JSON(response)
-}
 
 
 func handleGetStatus(ctx *fiber.Ctx) error {
-	response := new(StatusResponse)
-	response.TimeStamp = time.Now()
-	response.Message = "The system is up"
-	return ctx.JSON(response)
+	return ctx.JSON(StatusResponse{
+		TimeStamp: time.Now(),
+		Message:   "The system is up 🥲",
+	})
 }
 
-func startServer(ctx *context.Context) *fiber.App {
-	app := fiber.New()
-	createRoutes(app, ctx)
-	return app
-}
 
 func main() {
 	ctx := context.Background()
 	defer ctx.Done()
 
-	server := startServer(&ctx)
-	server.Listen(":8080")
+
+	server := newServer(&ctx)
+
+	server.createRoutes()
+
+	server.app.Listen(":8080")
 }
