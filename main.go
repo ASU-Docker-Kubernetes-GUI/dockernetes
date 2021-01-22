@@ -10,6 +10,7 @@ import (
 )
 
 type server struct {
+	ctx *context.Context
 	dockerClient *docker.Client
 	app *fiber.App
 }
@@ -70,12 +71,30 @@ func getContainer(ctx context.Context, dockerClient docker.Client, containerID s
 func createRoutes(app *fiber.App, ctx *context.Context) fiber.Router {
 	group := app.Group("api/v1")
 	group.Get("/", handleGetStatus)
+
+	group.Get("/containers", handleGetAllContainers)
+	group.Get("/container/:id", handleGetContainer)
 	return group
 }
 
-func(s *server) handleGetAllContainers() {
-	getContainers()
+func handleGetContainer(ctx *fiber.Ctx) error {
+	// Insert business logic for things here
+	return ctx.SendString("Sending container through here")
 }
+
+func (s *server) handleGetAllContainers(ctx *fiber.Ctx) error {
+	response, err := getContainers(*s.ctx, s.dockerClient)
+
+	if err != nil {
+		return ctx.JSON(StatusResponse{
+			TimeStamp: time.Now(),
+			Message:   "Unable to get all containers",
+		})
+	}
+
+	return ctx.JSON(response)
+}
+
 
 func handleGetStatus(ctx *fiber.Ctx) error {
 	response := new(StatusResponse)
