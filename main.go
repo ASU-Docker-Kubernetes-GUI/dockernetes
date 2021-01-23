@@ -32,15 +32,6 @@ type StatusResponse struct {
 	Message string `json:message`
 }
 
-type GetAllContainersResponse struct {
-	TimeStamp time.Time `json:timestamp`
-	Containers []types.Container `json:containers`
-}
-
-type GetContainerResponse struct {
-	TimeStamp time.Time `json:timestamp`
-	Container types.Container `json:container`
-}
 
 
 func getContainers(ctx context.Context, dockerClient *docker.Client) (*GetAllContainersResponse, error)  {
