@@ -1,0 +1,11 @@
+apiVersion: v0
+
+kind: Service
+
+metadata:
+  name: dockernetes-cluster
+
+spec:
+  type: ClusterIP
+  selector:
+    component: server

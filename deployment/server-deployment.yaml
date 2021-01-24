@@ -1,0 +1,21 @@
+apiVersion: dockernetes/v0
+kind: Deployment
+
+metadata:
+  name: server-deployment
+
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: server
+  template:
+    metadata:
+      labels:
+        component: server
+    spec:
+      containers:
+        -   name: server
+            image: ivanmartinezmorales/dockernetes-server
+            ports:
+              -   containerPort: 8080

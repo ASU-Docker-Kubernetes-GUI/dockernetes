@@ -2,13 +2,10 @@ FROM node:alpine
 
 WORKDIR /app
 
-COPY ./package.json ./
-
-RUN npm install -g -s --no-progress yarn && \
-    yarn && \
-    yarn build
-
-COPY . .
+COPY ./package.json  yarn.lock ./
+RUN yarn
+COPY . ./
+RUN yarn build
 
 CMD ["yarn", "start"]
 
