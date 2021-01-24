@@ -2,9 +2,12 @@ package handlers
 
 import (
 	"context"
+	"fmt"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/websocket/v2"
 	client "github.com/ivanmartinezmorales/dockernetes-server/server/docker_client"
+	"strconv"
+	"time"
 )
 
 var appContext = context.Background()
@@ -42,7 +45,7 @@ func HandleGetContainerLogs(c *websocket.Conn) error {
 	resp, err := dC.GetContainerLogs(ctx.Params("id"))
 
 	var (
-		mt int
+		mt  int
 		msg []byte
 		err error
 	)
@@ -54,6 +57,14 @@ func HandleGetContainerLogs(c *websocket.Conn) error {
 }
 
 func HandleStopContainer(ctx *fiber.Ctx) error {
+	err := dC.StopContainer(ctx.Params("id"))
+	t := time.Now()
+
+	if err != nil {
+		return ctx.JSON(err)
+	}
+
+	return ctx.JSON(map[string]string{"timestamp": t.String(), "message": "successfully removed container"})
 
 }
 

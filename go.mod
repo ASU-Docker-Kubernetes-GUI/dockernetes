@@ -11,16 +11,20 @@ require (
 	github.com/docker/go-connections v0.4.0 // indirect
 	github.com/docker/go-units v0.4.0 // indirect
 	github.com/gofiber/fiber/v2 v2.3.3
-	github.com/gofiber/websocket/v2 v2.0.2 // indirect
+	github.com/gofiber/websocket/v2 v2.0.2
 	github.com/gogo/protobuf v1.3.2 // indirect
+	github.com/gorilla/mux v1.8.0 // indirect
 	github.com/gorilla/schema v1.2.0 // indirect
 	github.com/klauspost/compress v1.11.7 // indirect
 	github.com/mattn/go-colorable v0.1.8 // indirect
+	github.com/moby/term v0.0.0-20201216013528-df9cb8a40635 // indirect
+	github.com/morikuni/aec v1.0.0 // indirect
 	github.com/opencontainers/go-digest v1.0.0 // indirect
 	github.com/opencontainers/image-spec v1.0.1 // indirect
 	github.com/savsgio/gotils v0.0.0-20210120114113-f9d780dcbd93 // indirect
 	github.com/sirupsen/logrus v1.7.0 // indirect
 	github.com/valyala/fasthttp v1.19.0 // indirect
 	golang.org/x/sys v0.0.0-20210123231150-1d476976d117 // indirect
+	golang.org/x/time v0.0.0-20201208040808-7e3f01d25324 // indirect
 	google.golang.org/grpc v1.35.0 // indirect
 )

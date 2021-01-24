@@ -9,7 +9,6 @@ import (
 	"time"
 )
 
-
 type server struct {
 	ctx          *context.Context
 	dockerClient *docker.Client
