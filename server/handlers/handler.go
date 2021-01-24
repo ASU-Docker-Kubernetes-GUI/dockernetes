@@ -2,17 +2,15 @@ package handlers
 
 import (
 	"context"
-	"fmt"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/websocket/v2"
 	client "github.com/ivanmartinezmorales/dockernetes-server/server/docker_client"
-	"strconv"
 	"time"
 )
 
-var appContext = context.Background()
+var AppContext = context.Background()
 
-var dC = client.NewDockerClient(&appContext)
+var dC = client.NewDockerClient(&AppContext)
 
 // HandleGetStatus returns the current status of the docker container
 func HandleGetStatus(ctx *fiber.Ctx) error {
@@ -34,26 +32,15 @@ func HandleGetAllContainers(ctx *fiber.Ctx) error {
 }
 
 func HandleGetAllContainersByID(ctx *fiber.Ctx) error {
-
+	return ctx.SendString("Not Implemented")
 }
 
 func HandleCreateContainer(ctx *fiber.Ctx) error {
-
+	return ctx.SendString("Not Implemented")
 }
 
 func HandleGetContainerLogs(c *websocket.Conn) error {
-	resp, err := dC.GetContainerLogs(ctx.Params("id"))
-
-	var (
-		mt  int
-		msg []byte
-		err error
-	)
-
-	for {
-
-	}
-
+	return c.WriteJSON("not implemented")
 }
 
 func HandleStopContainer(ctx *fiber.Ctx) error {
@@ -69,9 +56,9 @@ func HandleStopContainer(ctx *fiber.Ctx) error {
 }
 
 func HandleStopAllContainers(ctx *fiber.Ctx) error {
-
+	return ctx.SendString("Not Implemented")
 }
 
 func HandleRestartContainer(ctx *fiber.Ctx) error {
-
+	return ctx.SendString("Not Implemented")
 }

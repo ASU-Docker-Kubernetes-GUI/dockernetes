@@ -4,10 +4,10 @@ ENV GO111MODULE=on
 
 WORKDIR /app
 
-COPY ./go.mod .
+COPY ../go.mod .
 
 RUN go mod download
 
-COPY . .
+COPY .. .
 
 CMD ["go", "run", "main.go"]
