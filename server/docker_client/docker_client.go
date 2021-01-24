@@ -2,6 +2,7 @@ package client
 
 import (
 	"context"
+	"errors"
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/container"
 	docker "github.com/docker/docker/client"
@@ -10,19 +11,33 @@ import (
 )
 
 type dockerClient struct {
-	ctx            *context.Context
-	dockerClient   *docker.Client
+	ctx          *context.Context
+	dockerClient *docker.Client
+	// containerCache is a map of containerIDs to Containers
 	containerCache map[string]types.Container
-	imageCache     map[string]bool
+	// imageCache is a map of images to booleans. True if image is fresh
+	imageCache map[string]bool
 }
 
 type DockerClient interface {
+	GetDockerStatus() (*types.Info, error)
 	GetAllContainers() (*[]types.Container, error)
-	GetContainerById(ID string) (types.Container, error)
-	CreateContainer(imageName, containerName string) (*types.Container, error)
-	GetContainerLogs(containerName string) (*io.ReadCloser, error)
-	StopAllContainers() error
+	GetContainerById(ID string) (*types.Container, error)
+	CreateContainer(imageName, containerName string) error
+	GetContainerLogs(containerID string) (*io.ReadCloser, error)
+	StopContainer(containerID string) error
+	StopAllContainers() ([]string, error)
 	RestartContainer(containerID string) error
+}
+
+// GetDockerStatus returns the current Docker server environment
+func (d *dockerClient) GetDockerStatus() (*types.Info, error) {
+	resp, err := d.dockerClient.Info(*d.ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	return &resp, nil
 }
 
 // NewDockerClient creates a new Docker Client with a provided context
@@ -45,7 +60,8 @@ func (d *dockerClient) GetAllContainers() (*[]types.Container, error) {
 		return nil, err
 	}
 
-	// Store the containers in the cache. This way when we call `GetContainerById` we can immediately return the result
+	// Store the containers in the cache. This way when we call `GetContainerById` we can
+	// immediately return the result
 	for _, container := range response {
 		if con, ok := d.containerCache[container.ID]; !ok {
 			d.containerCache[container.ID] = container
@@ -58,7 +74,8 @@ func (d *dockerClient) GetAllContainers() (*[]types.Container, error) {
 }
 
 // GetContainerById
-func (d dockerClient) GetContainerById(ID string) (*types.Container, error) {
+func (d *dockerClient) GetContainerById(ID string) (*types.Container, error) {
+	// Immediately check if the container exists in the cache, if so then add it in
 	if container, ok := d.containerCache[ID]; ok {
 		return &container, nil
 	}
@@ -81,8 +98,7 @@ func (d dockerClient) GetContainerById(ID string) (*types.Container, error) {
 }
 
 // CreateContainer
-func (d dockerClient) CreateContainer(imageName, containerName string) error {
-	// Check if the image already exists
+func (d *dockerClient) CreateContainer(imageName, containerName string) error {
 	if _, ok := d.imageCache[imageName]; !ok {
 		img, err := d.dockerClient.ImagePull(*d.ctx, imageName, types.ImagePullOptions{})
 		if err != nil {
@@ -95,6 +111,7 @@ func (d dockerClient) CreateContainer(imageName, containerName string) error {
 			return err
 		}
 
+		// Add the image to our image cache so we don't have to build it again
 		d.imageCache[imageName] = true
 	}
 
@@ -111,26 +128,77 @@ func (d dockerClient) CreateContainer(imageName, containerName string) error {
 		return err
 	}
 
-	// Start the container
 	if err := d.dockerClient.ContainerStart(*d.ctx, resp.ID, types.ContainerStartOptions{}); err != nil {
 		return err
 	}
 
-	// Now add the image to our image cache.
+	// Store the ID in the containerCache
+	if _, ok := d.containerCache[resp.ID]; !ok {
+		d.containerCache[resp.ID] = types.Container{ID: resp.ID}
+	}
+
 	return nil
 }
 
 // GetContainerLogs
-func (d dockerClient) GetContainerLogs(containerName string) (*io.ReadCloser, error) {
-	panic("implement me")
+func (d *dockerClient) GetContainerLogs(containerID string) (*io.ReadCloser, error) {
+	if container, ok := d.containerCache[containerID]; !ok {
+		return nil, errors.New("container does not exist in containerCache")
+	} else {
+		logs, err := d.dockerClient.ContainerLogs(*d.ctx, container.ID, types.ContainerLogsOptions{ShowStdout: true})
+
+		if err != nil {
+			return nil, err
+		}
+
+		// TODO: Fix this with: https://stackoverflow.com/a/48305795
+		// NOTE: Demultiplex this in order to stream it
+		return &logs, nil
+	}
 }
 
-// StopAllContainers
-func (d dockerClient) StopAllContainers() error {
-	panic("implement me")
+// StopAllContainers stops all containers that are currently running
+func (d *dockerClient) StopAllContainers() ([]string, error) {
+	// Use the list of running containers from the cache
+	var erroredContainerIDs []string
+	_, err := d.GetAllContainers()
+	if err != nil {
+		return nil, err
+	}
+
+	for _, container := range d.containerCache {
+		// Stop the container
+		if err := d.dockerClient.ContainerStop(*d.ctx, container.ID, nil); err != nil {
+			erroredContainerIDs = append(erroredContainerIDs, container.ID)
+		}
+
+		// Remove these fields from the container cache
+		if _, ok := d.containerCache[container.ID]; ok {
+			delete(d.containerCache, container.ID)
+		}
+	}
+
+	return erroredContainerIDs, nil
 }
 
-// RestartContainer
-func (d dockerClient) RestartContainer(containerID string) error {
-	panic("implement me")
+// RestartContainer restarts a container that was previously stopped
+func (d *dockerClient) RestartContainer(containerID string) error {
+	err := d.dockerClient.ContainerRestart(*d.ctx, containerID, nil)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (d *dockerClient) StopContainer(containerID string) error {
+	if err := d.dockerClient.ContainerStop(*d.ctx, containerID, nil); err != nil {
+		return err
+	}
+
+	// Remove this item from the container cache
+	if _, ok := d.containerCache[containerID]; ok {
+		delete(d.containerCache, containerID)
+	}
+
+	return nil
 }

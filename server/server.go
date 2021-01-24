@@ -7,9 +7,9 @@ import (
 )
 
 type server struct {
-	ctx *context.Context
+	ctx          *context.Context
 	dockerClient *docker.Client
-	app *fiber.App
+	app          *fiber.App
 }
 
 func NewServer() *server {

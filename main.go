@@ -9,10 +9,11 @@ import (
 	"time"
 )
 
+
 type server struct {
-	ctx *context.Context
+	ctx          *context.Context
 	dockerClient *docker.Client
-	app *fiber.App
+	app          *fiber.App
 }
 
 func newServer(ctx *context.Context) *server {
@@ -29,12 +30,10 @@ func newServer(ctx *context.Context) *server {
 
 type StatusResponse struct {
 	TimeStamp time.Time `json:timestamp`
-	Message string `json:message`
+	Message   string    `json:message`
 }
 
-
-
-func getContainers(ctx context.Context, dockerClient *docker.Client) (*GetAllContainersResponse, error)  {
+func getContainers(ctx context.Context, dockerClient *docker.Client) (*GetAllContainersResponse, error) {
 	containers, err := dockerClient.ContainerList(ctx, types.ContainerListOptions{All: true})
 	if err != nil {
 		return nil, errors.New("Unable to fetch containres")
@@ -55,7 +54,7 @@ func getContainer(ctx context.Context, dockerClient *docker.Client, containerID 
 	for _, container := range containers {
 		if container.ID == containerID {
 			return &GetContainerResponse{
-				TimeStamp:  time.Now(),
+				TimeStamp: time.Now(),
 				Container: container,
 			}, nil
 		}
@@ -102,8 +101,6 @@ func handleGetContainer(ctx *fiber.Ctx) error {
 	return ctx.SendString("Sending container through here")
 }
 
-
-
 func handleGetStatus(ctx *fiber.Ctx) error {
 	return ctx.JSON(StatusResponse{
 		TimeStamp: time.Now(),
@@ -111,11 +108,9 @@ func handleGetStatus(ctx *fiber.Ctx) error {
 	})
 }
 
-
 func main() {
 	ctx := context.Background()
 	defer ctx.Done()
-
 
 	server := newServer(&ctx)
 	server.createRoutes()
