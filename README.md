@@ -23,7 +23,7 @@ minikube apply -f deployment
 
 This will deploy DMS to your local k8s cluster.
 
-## With EKS
+### With EKS
 
 ***This is still in development, and we will revisit this soon. Thanks for 
 the wait.***
