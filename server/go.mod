@@ -1,4 +1,4 @@
-module github.com/ivanmartinezmorales/dockernetes-server/server
+module github.com/ivanmartinezmorales/dockernetes/server
 
 go 1.15
 
