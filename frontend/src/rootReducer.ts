@@ -4,7 +4,7 @@ import { History } from 'history';
 // eslint-disable-next-line import/no-cycle
 
 export default function createRootReducer(history: History) {
-    return combineReducers({
-        router: connectRouter(history),
-    });
+  return combineReducers({
+    router: connectRouter(history),
+  });
 }

@@ -5,16 +5,16 @@ import { Store } from '../store';
 import Routes from '../Routes';
 
 type RootProps = {
-    store: Store;
-    history: History;
+  store: Store;
+  history: History;
 };
 
 const Root = ({ store, history }: RootProps) => (
-    <Provider store={store}>
-        <ConnectedRouter history={history}>
-            <Routes />
-        </ConnectedRouter>
-    </Provider>
+  <Provider store={store}>
+    <ConnectedRouter history={history}>
+      <Routes />
+    </ConnectedRouter>
+  </Provider>
 );
 
 export default Root;

@@ -13,27 +13,27 @@ const rootReducer = createRootReducer(history);
 
 const excludeLoggerEnvs = ['test', 'production'];
 const shouldIncludeLogger = !excludeLoggerEnvs.includes(
-    process.env.NODE_ENV || '',
+  process.env.NODE_ENV || '',
 );
 
 if (shouldIncludeLogger) {
-    const logger = createLogger({
-        level: 'info',
-        collapsed: true,
-    });
-    middleware.push(logger);
+  const logger = createLogger({
+    level: 'info',
+    collapsed: true,
+  });
+  middleware.push(logger);
 }
 
 export type RootState = ReturnType<typeof rootReducer>;
 
 export const configuredStore = (initialState?: RootState) => {
-    const store = configureStore({
-        preloadedState: initialState,
-        reducer: rootReducer,
-        middleware: middleware,
-    });
+  const store = configureStore({
+    preloadedState: initialState,
+    reducer: rootReducer,
+    middleware: middleware,
+  });
 
-    return store;
+  return store;
 };
 
 export type Store = ReturnType<typeof configuredStore>;

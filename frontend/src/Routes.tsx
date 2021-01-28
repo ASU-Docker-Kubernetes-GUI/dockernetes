@@ -7,26 +7,26 @@ import { Switch, Route } from 'react-router-dom';
 import route from './constants/routes.json';
 
 export default class Routes extends React.PureComponent {
-    LazyLoadingScreen = (name: string) => <LoadingScreen name={name} />;
+  LazyLoadingScreen = (name: string) => <LoadingScreen name={name} />;
 
-    LazyHomeContainer = React.lazy(() => import('./containers/Home'));
+  LazyHomeContainer = React.lazy(() => import('./containers/Home'));
 
-    HomePage = (props: Record<string, any>) => (
-        <React.Suspense fallback={this.LazyLoadingScreen}>
-            <this.LazyHomeContainer {...props} />
-        </React.Suspense>
+  HomePage = (props: Record<string, any>) => (
+    <React.Suspense fallback={this.LazyLoadingScreen}>
+      <this.LazyHomeContainer {...props} />
+    </React.Suspense>
+  );
+
+  public render() {
+    return (
+      <App>
+        <Navigation isLoading={false} />
+        <Switch>
+          <Route exact path={route.HOME} component={this.HomePage} />
+          <Route path={route.CONTAINERS} component={this.HomePage} />
+          <Route path={route.SETTINGS} component={this.HomePage} />
+        </Switch>
+      </App>
     );
-
-    public render() {
-        return (
-            <App>
-                <Navigation isLoading={false} />
-                <Switch>
-                    <Route exact path={route.HOME} component={this.HomePage} />
-                    <Route path={route.CONTAINERS} component={this.HomePage} />
-                    <Route path={route.SETTINGS} component={this.HomePage} />
-                </Switch>
-            </App>
-        );
-    }
+  }
 }

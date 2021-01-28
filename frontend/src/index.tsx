@@ -14,13 +14,13 @@ import '@blueprintjs/select/lib/css/blueprint-select.css';
 const store = configuredStore();
 
 document.addEventListener('DOMContentLoaded', () => {
-    const Root = require('./containers/Root').default;
-    render(
-        <Fragment>
-            <Root store={store} history={history} />
-        </Fragment>,
-        document.getElementById('root'),
-    );
+  const Root = require('./containers/Root').default;
+  render(
+    <Fragment>
+      <Root store={store} history={history} />
+    </Fragment>,
+    document.getElementById('root'),
+  );
 });
 
 // If you want to start measuring performance in your app, pass a function
