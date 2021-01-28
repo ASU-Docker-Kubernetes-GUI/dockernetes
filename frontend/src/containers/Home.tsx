@@ -1,33 +1,28 @@
-import React, {ReactElement} from "react";
-import {Classes, IconName, NonIdealState} from "@blueprintjs/core";
+import React, { ReactElement } from 'react';
+import { IconName, NonIdealState } from '@blueprintjs/core';
 
 type NoContainersFoundProps = {
     icon: IconName;
     description: ReactElement;
     message: string;
-}
+};
 
 function NoContainersFound(props: NoContainersFoundProps): ReactElement {
     const { icon, description, message } = props;
     return (
-    <NonIdealState
-        icon={icon}
-        title={message}
-        description={description}
-    />);
+        <NonIdealState icon={icon} title={message} description={description} />
+    );
 }
 
+type DockerStatusProps = {};
 
-type DockerStatusProps = {
-
-}
-
-function DockerStatus(props: DockerStatusProps): React.ReactElement | undefined {
+function DockerStatus(
+    props: DockerStatusProps,
+): React.ReactElement | undefined {
     return undefined;
 }
 
 class HomeContainer extends React.PureComponent {
-
     description = (
         <>
             You currently have no containers running.
@@ -38,12 +33,15 @@ class HomeContainer extends React.PureComponent {
 
     render() {
         return (
-            <div style={{paddingTop: "1rem"}}>
-                <NoContainersFound icon="cross" description={this.description} message="No Containers Found"/>
-           </div>
+            <div style={{ paddingTop: '1rem' }}>
+                <NoContainersFound
+                    icon="cross"
+                    description={this.description}
+                    message="No Containers Found"
+                />
+            </div>
         );
     }
-
 }
 
 export default HomeContainer;
