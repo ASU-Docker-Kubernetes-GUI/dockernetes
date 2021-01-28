@@ -9,7 +9,7 @@ import route from './constants/routes.json';
 export default class Routes extends React.PureComponent {
   LazyLoadingScreen = (name: string) => <LoadingScreen name={name} />;
 
-  LazyHomeContainer = React.lazy(() => import('./containers/Home'));
+  LazyHomeContainer = React.lazy(() => import('./features/home/Home'));
 
   HomePage = (props: Record<string, any>) => (
     <React.Suspense fallback={this.LazyLoadingScreen}>
