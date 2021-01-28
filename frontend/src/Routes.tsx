@@ -1,11 +1,15 @@
 import React, { ReactElement } from "react";
-import { Switch, Route, Link } from 'react-router-dom';
 import App from './containers/App';
+import {Button} from "@blueprintjs/core";
+import LoadingScreen from "./components/LoadingScreen";
+import Navigation from "./components/NavigationBar";
 
-export default function Routes() {
-    <App>
-        <h1>Hello world</h1>
-        <Switch>
-        </Switch>
-    </App>
+export default function Routes(): ReactElement {
+    return (
+        <App>
+            <Navigation isLoading={false}/>
+            <h1>Hello world</h1>
+        </App>
+    );
 };
+

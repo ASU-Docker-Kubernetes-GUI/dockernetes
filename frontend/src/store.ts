@@ -1,7 +1,7 @@
 import {configureStore, Action, getDefaultMiddleware} from '@reduxjs/toolkit';
 import { combineReducers } from 'redux';
 import {connectRouter, routerMiddleware} from 'connected-react-router';
-import { History, createHashHistory } from 'history';
+import { createHashHistory } from 'history';
 import { createLogger } from 'redux-logger';
 import { ThunkAction } from 'redux-thunk';
 import createRootReducer from "./rootReducer";
