@@ -1,5 +1,6 @@
 import React, { ReactElement } from 'react';
 import { IconName, NonIdealState } from '@blueprintjs/core';
+import { checkApiStatus, checkDockerStatus, Status } from './HomeSlice';
 
 type NoContainersFoundProps = {
   icon: IconName;
@@ -14,15 +15,24 @@ function NoContainersFound(props: NoContainersFoundProps): ReactElement {
   );
 }
 
-type DockerStatusProps = {};
+type DockerStatusProps = {
+  dockerStatus: Status;
+  apiStatus: Status;
+};
 
 function DockerStatus(
   props: DockerStatusProps,
 ): React.ReactElement | undefined {
-  return undefined;
+  const { dockerStatus, apiStatus } = props;
+  return <>{apiStatus + ' ' + dockerStatus}</>;
 }
 
 class HomeContainer extends React.PureComponent {
+  componentDidMount() {
+    checkDockerStatus();
+    checkApiStatus();
+  }
+
   description = (
     <>
       You currently have no containers running.

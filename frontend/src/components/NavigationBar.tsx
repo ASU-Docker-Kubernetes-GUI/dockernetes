@@ -13,7 +13,6 @@ import routes from '../constants/routes.json';
 
 import { Link } from 'react-router-dom';
 
-
 interface INavigationItemProps {
   route: string;
   name: string;
