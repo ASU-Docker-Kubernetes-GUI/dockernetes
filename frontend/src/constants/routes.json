@@ -1,7 +1,22 @@
 {
-  "HOME": "/",
-  "CONTAINERS" : "/containers",
-  "CREATE_CONTAINER" : "/createContainer",
-  "IMAGES" : "/images",
-  "SETTINGS" : "/settings"
+    "HOME": {
+      "path": "/",
+      "title": "Home"
+    },
+    "CONTAINERS": {
+      "path": "/containers",
+      "title": "Containers"
+    },
+    "CREATE_CONTAINERS": {
+      "path": "/createContainer",
+      "title": "Create Container"
+    },
+    "IMAGES" : {
+      "path": "/images",
+      "title": "Images"
+    },
+    "SETTINGS" : {
+      "path": "/settings",
+      "title": "Settings"
+    }
 }

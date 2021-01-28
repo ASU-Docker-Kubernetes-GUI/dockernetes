@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ReactElement } from 'react';
 import {
   Alignment,
   Button,
@@ -9,55 +9,74 @@ import {
   NavbarHeading,
 } from '@blueprintjs/core';
 
-import Route from '../constants/routes.json';
+import routes from '../constants/routes.json';
 
 import { Link } from 'react-router-dom';
+
+
+interface INavigationItemProps {
+  route: string;
+  name: string;
+  classNames: string;
+}
+
+const NavigationItem = (props: INavigationItemProps): ReactElement => {
+  const { route, classNames, name } = props;
+  return (
+    <>
+      <Link to={route}>
+        <Button text={name} minimal className={classNames} />
+      </Link>
+      <NavbarDivider />
+    </>
+  );
+};
 
 type NavigationBarProps = {
   isLoading: boolean;
 };
 
-export default function Navigation(
-  props: NavigationBarProps,
-): React.ReactElement {
-  const { isLoading } = props;
-  const elementIsLoading = isLoading ? Classes.SKELETON : '';
+export default class Navigation extends React.Component<NavigationBarProps> {
+  render(): React.ReactElement {
+    const { isLoading } = this.props;
+    const elementIsLoading = isLoading ? Classes.SKELETON : '';
 
-  return (
-    <Navbar className={Classes.DARK}>
-      <NavbarGroup align={Alignment.LEFT}>
-        <NavbarHeading className={elementIsLoading}>Dockernetes</NavbarHeading>
-        <NavbarDivider />
-        <Link to={Route.HOME}>
-          <Button text="Home" minimal className={elementIsLoading} />
-        </Link>
-        <NavbarDivider />
-        <Link to={Route.CONTAINERS}>
-          <Button text="Containers" minimal className={elementIsLoading} />
-        </Link>
-        <NavbarDivider />
-        <Link to={Route.IMAGES}>
-          <Button text="Images" minimal className={elementIsLoading} />
-        </Link>
-        <NavbarDivider />
-        <Link to={Route.CREATE_CONTAINER}>
-          <Button
-            text="Create Container"
-            minimal
-            className={elementIsLoading}
+    return (
+      <Navbar className={Classes.DARK}>
+        <NavbarGroup align={Alignment.LEFT}>
+          <NavbarHeading className={elementIsLoading}>
+            Dockernetes
+          </NavbarHeading>
+          <NavbarDivider />
+          <NavigationItem
+            route={routes.HOME.path}
+            name={routes.HOME.title}
+            classNames={elementIsLoading}
           />
-        </Link>
-      </NavbarGroup>
-      <NavbarGroup align={Alignment.RIGHT}>
-        <Link to={Route.SETTINGS}>
-          <Button
-            text="Settings"
-            minimal
-            icon="cog"
-            className={elementIsLoading}
+          <NavigationItem
+            route={routes.CONTAINERS.path}
+            name={routes.CONTAINERS.title}
+            classNames={elementIsLoading}
           />
-        </Link>
-      </NavbarGroup>
-    </Navbar>
-  );
+          <NavigationItem
+            route={routes.CREATE_CONTAINERS.path}
+            name={routes.CREATE_CONTAINERS.title}
+            classNames={elementIsLoading}
+          />
+          <NavigationItem
+            route={routes.IMAGES.path}
+            name={routes.IMAGES.title}
+            classNames={elementIsLoading}
+          />
+        </NavbarGroup>
+        <NavbarGroup align={Alignment.RIGHT}>
+          <NavigationItem
+            route={routes.SETTINGS.path}
+            name={routes.SETTINGS.title}
+            classNames={elementIsLoading}
+          />
+        </NavbarGroup>
+      </Navbar>
+    );
+  }
 }
