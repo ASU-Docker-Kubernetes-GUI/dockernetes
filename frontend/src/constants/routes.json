@@ -1,5 +1,7 @@
 {
   "HOME": "/",
-  "CONTAINERS": "/containers",
-  "SETTINGS": "/settings"
+  "CONTAINERS" : "/containers",
+  "CREATE_CONTAINER" : "/createContainer",
+  "IMAGES" : "/images",
+  "SETTINGS" : "/settings"
 }

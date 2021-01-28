@@ -1,7 +1,6 @@
 import React from "react";
 import {
     Alignment,
-    AnchorButton,
     Button,
     Classes,
     Navbar,
@@ -22,43 +21,34 @@ export default function Navigation(props: NavigationBarProps): React.ReactElemen
     const { isLoading } = props;
     const elementIsLoading = isLoading ? Classes.SKELETON : "";
 
-    return (<Navbar className={Classes.DARK} fixedToTop>
-        <NavbarGroup align={Alignment.LEFT} >
-            <NavbarHeading
-                className={elementIsLoading}
-            >Dockernetes</NavbarHeading>
-            <NavbarDivider/>
-            <Link to={Route.CONTAINERS}>
-                <Button text="containers"/>
-
-            </Link>
-            <AnchorButton
-                href="http://blueprintjs.com/docs/v2/"
-                text="Docs"
-                target="_blank"
-                minimal
-                rightIcon="share"
-                className={elementIsLoading}
-            />
-            <AnchorButton
-                href="http://github.com/palantir/blueprint"
-                text="Github"
-                target="_blank"
-                minimal
-                rightIcon="code"
-                className={elementIsLoading}
-            />
-        </NavbarGroup>
-            <NavbarGroup align={Alignment.RIGHT}>
-                <AnchorButton
-                    href="http://github.com/palantir/blueprint"
-                    text="Settings"
-                    target="_blank"
-                    minimal
-                    rightIcon="code"
-                    className={elementIsLoading}
-                />
+    return (
+        <Navbar className={Classes.DARK}>
+            <NavbarGroup align={Alignment.LEFT}>
+                <NavbarHeading className={elementIsLoading}>
+                    Dockernetes
+                </NavbarHeading>
+                <NavbarDivider/>
+                <Link to={Route.HOME}>
+                    <Button text="Home" minimal className={elementIsLoading} />
+                </Link>
+                <NavbarDivider />
+                <Link to={Route.CONTAINERS}>
+                    <Button text="Containers" minimal className={elementIsLoading} />
+                </Link>
+                <NavbarDivider />
+                <Link to={Route.IMAGES}>
+                    <Button text="Images" minimal className={elementIsLoading} />
+                </Link>
+                <NavbarDivider />
+                <Link to={Route.CREATE_CONTAINER}>
+                    <Button text="Create Container" minimal className={elementIsLoading} />
+                </Link>
             </NavbarGroup>
-    </Navbar>
+            <NavbarGroup align={Alignment.RIGHT}>
+                <Link to={Route.SETTINGS}>
+                    <Button text="Settings" minimal icon="cog" className={elementIsLoading} />
+                </Link>
+            </NavbarGroup>
+        </Navbar>
     );
 }

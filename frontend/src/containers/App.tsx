@@ -1,12 +1,11 @@
-import { ReactNode } from "react";
+import React, { ReactNode } from "react";
+import {Classes} from "@blueprintjs/core";
 
 type AppProps = {
     children: ReactNode;
 }
 
-const theme = {};
-
 export default function App(props: AppProps) {
     const { children } = props;
-    return <>{ children }</>;
+    return <div>{ children }</div>;
 }
