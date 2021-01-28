@@ -1,6 +1,8 @@
 import React, { ReactElement } from 'react';
 import { IconName, NonIdealState } from '@blueprintjs/core';
-import { checkApiStatus, checkDockerStatus, Status } from './HomeSlice';
+import {checkApiStatus, checkDockerStatus, getApiStatus, getDockerStatus, Status} from './HomeSlice';
+import {Intent, Tag} from "@blueprintjs/core/lib/esnext";
+import {useSelector} from "react-redux";
 
 type NoContainersFoundProps = {
   icon: IconName;
@@ -15,17 +17,18 @@ function NoContainersFound(props: NoContainersFoundProps): ReactElement {
   );
 }
 
-type DockerStatusProps = {
-  dockerStatus: Status;
-  apiStatus: Status;
+const statusColor = (status: Status): Intent => {
+  switch (status) {
+    case Status.ON:
+      return "success";
+    case Status.DEGRADED:
+      return "warning";
+    case Status.OFF:
+      return "danger";
+  }
 };
 
-function DockerStatus(
-  props: DockerStatusProps,
-): React.ReactElement | undefined {
-  const { dockerStatus, apiStatus } = props;
-  return <>{apiStatus + ' ' + dockerStatus}</>;
-}
+
 
 class HomeContainer extends React.PureComponent {
   componentDidMount() {
@@ -41,7 +44,14 @@ class HomeContainer extends React.PureComponent {
     </>
   );
 
+  ServerStatusBadge = (status: Status) => {
+    <Tag title="  " intent={statusColor(status)} round />
+  };
+
   render() {
+    const dockerStatus = useSelector(getDockerStatus);
+    const apiStatus = useSelector(getApiStatus);
+
     return (
       <div style={{ paddingTop: '1rem' }}>
         <NoContainersFound
@@ -49,6 +59,7 @@ class HomeContainer extends React.PureComponent {
           description={this.description}
           message="No Containers Found"
         />
+        <ServerStatusBadge status={dockerStatus}/>
       </div>
     );
   }
