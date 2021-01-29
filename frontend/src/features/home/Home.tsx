@@ -1,8 +1,13 @@
 import React, { ReactElement } from 'react';
-import { IconName, NonIdealState } from '@blueprintjs/core';
-import {checkApiStatus, checkDockerStatus, getApiStatus, getDockerStatus, Status} from './HomeSlice';
-import {Intent, Tag} from "@blueprintjs/core/lib/esnext";
-import {useSelector} from "react-redux";
+import { IconName, Intent, NonIdealState, Tag } from '@blueprintjs/core';
+import {
+  checkApiStatus,
+  checkDockerStatus,
+  getApiStatus,
+  getDockerStatus,
+  Status,
+} from './HomeSlice';
+import { useSelector } from 'react-redux';
 
 type NoContainersFoundProps = {
   icon: IconName;
@@ -17,52 +22,60 @@ function NoContainersFound(props: NoContainersFoundProps): ReactElement {
   );
 }
 
-const statusColor = (status: Status): Intent => {
+export const statusColor = (status: Status): Intent => {
   switch (status) {
     case Status.ON:
-      return "success";
+      return 'success';
     case Status.DEGRADED:
-      return "warning";
+      return 'warning';
     case Status.OFF:
-      return "danger";
+      return 'danger';
   }
 };
 
-
-
-class HomeContainer extends React.PureComponent {
-  componentDidMount() {
-    checkDockerStatus();
-    checkApiStatus();
+export const message = (status: Status): string => {
+  switch (status) {
+    case Status.ON:
+      return 'Ready';
+    case Status.DEGRADED:
+      return 'Degraded';
+    case Status.OFF:
+      return 'Off';
   }
+};
 
-  description = (
-    <>
-      You currently have no containers running.
-      <br />
-      Try creating a container in the "Create Container" tab.
-    </>
-  );
+const description = (
+  <>
+    You currently have no containers running.
+    <br />
+    Try creating a container in the <em>Create Container</em> tab.
+  </>
+);
 
-  ServerStatusBadge = (status: Status) => {
-    <Tag title="  " intent={statusColor(status)} round />
-  };
+function HomeContainer() {
+  checkDockerStatus();
+  checkApiStatus();
 
-  render() {
-    const dockerStatus = useSelector(getDockerStatus);
-    const apiStatus = useSelector(getApiStatus);
+  const dockerStatus = useSelector(getDockerStatus);
+  const apiStatus = useSelector(getApiStatus);
 
-    return (
-      <div style={{ paddingTop: '1rem' }}>
-        <NoContainersFound
-          icon="cross"
-          description={this.description}
-          message="No Containers Found"
-        />
-        <ServerStatusBadge status={dockerStatus}/>
+  return (
+    <div style={{ paddingTop: '1rem' }}>
+      <NoContainersFound
+        icon="cross"
+        description={description}
+        message="No Containers Found"
+      />
+      <div>
+        <p>{message(dockerStatus)}</p>
+        <Tag intent={statusColor(dockerStatus)} round />
       </div>
-    );
-  }
+      <div>
+        <p>{message(apiStatus)}</p>
+        <Tag intent={statusColor(apiStatus)} round />
+      </div>
+    </div>
+  );
 }
 
 export default HomeContainer;

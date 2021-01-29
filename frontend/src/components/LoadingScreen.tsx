@@ -1,4 +1,4 @@
-import { ReactElement } from 'react';
+import React from 'react';
 import { Spinner } from '@blueprintjs/core';
 
 export interface LoadingScreenProps {
@@ -6,7 +6,7 @@ export interface LoadingScreenProps {
   size?: number;
 }
 
-export default (props: LoadingScreenProps): ReactElement => {
+export default function LoadingScreen(props: LoadingScreenProps) {
   const { name, size } = props;
   const spinnerSize = size != null ? size : 100;
 
@@ -16,4 +16,4 @@ export default (props: LoadingScreenProps): ReactElement => {
       <h1>Loading {name}...</h1>
     </>
   );
-};
+}

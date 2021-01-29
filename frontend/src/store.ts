@@ -36,5 +36,7 @@ export const configuredStore = (initialState?: RootState) => {
   return store;
 };
 
+export const getCurrentPathname = (state: RootState) =>
+  state.router.location.pathname;
 export type Store = ReturnType<typeof configuredStore>;
 export type AppThunk = ThunkAction<void, RootState, unknown, Action<string>>;
