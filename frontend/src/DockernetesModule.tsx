@@ -10,7 +10,7 @@ interface RootProps {
   history: History;
 }
 
-const Application = (props: RootProps) => (
+const DockernetesModule = (props: RootProps) => (
   <Provider store={props.store}>
     <ConnectedRouter history={props.history}>
       <ApplicationRouter />
@@ -18,4 +18,4 @@ const Application = (props: RootProps) => (
   </Provider>
 );
 
-export default Application;
+export default DockernetesModule;

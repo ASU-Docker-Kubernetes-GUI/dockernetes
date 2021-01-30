@@ -13,7 +13,7 @@ import { configuredStore, history } from './store/store';
 const store = configuredStore();
 
 document.addEventListener('DOMContentLoaded', () => {
-  const Root = require('./Application').Application;
+  const Root = require('./DockernetesModule').DockernetesModule;
   render(
     <Fragment>
       <Root store={store} history={history} />
