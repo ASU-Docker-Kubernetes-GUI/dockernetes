@@ -5,10 +5,16 @@ import { createHashHistory } from 'history';
 import { createLogger } from 'redux-logger';
 import { ThunkAction } from 'redux-thunk';
 import createRootReducer from './rootReducer';
+import LogRocket from 'logrocket';
 
 export const history = createHashHistory();
 const router = routerMiddleware(history);
-const middleware = [...getDefaultMiddleware(), router];
+const middleware = [
+  ...getDefaultMiddleware(),
+  router,
+  LogRocket.reduxMiddleware(),
+];
+
 const rootReducer = createRootReducer(history);
 
 const excludeLoggerEnvs = ['test', 'production'];
