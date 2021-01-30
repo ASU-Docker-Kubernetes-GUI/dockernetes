@@ -13,7 +13,7 @@ import {
 
 import routes from '../constants/routes.json';
 import { Link } from 'react-router-dom';
-import { getCurrentPathname } from '../store';
+import { getCurrentPathname } from '../store/store';
 import { useSelector } from 'react-redux';
 import {
   checkApiStatus,

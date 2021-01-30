@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { AppThunk, RootState } from '../../store';
+import { AppThunk, RootState } from '../../store/store';
 
 export enum Status {
   ON,
