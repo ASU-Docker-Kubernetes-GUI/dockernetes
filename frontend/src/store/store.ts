@@ -1,9 +1,8 @@
-import { configureStore, Action, getDefaultMiddleware } from '@reduxjs/toolkit';
-import { combineReducers } from 'redux';
-import { connectRouter, routerMiddleware } from 'connected-react-router';
-import { createHashHistory } from 'history';
-import { createLogger } from 'redux-logger';
-import { ThunkAction } from 'redux-thunk';
+import {Action, configureStore, getDefaultMiddleware} from '@reduxjs/toolkit';
+import {routerMiddleware} from 'connected-react-router';
+import {createHashHistory} from 'history';
+import {createLogger} from 'redux-logger';
+import {ThunkAction} from 'redux-thunk';
 import createRootReducer from './rootReducer';
 import LogRocket from 'logrocket';
 
@@ -33,13 +32,11 @@ if (shouldIncludeLogger) {
 export type RootState = ReturnType<typeof rootReducer>;
 
 export const configuredStore = (initialState?: RootState) => {
-  const store = configureStore({
+  return configureStore({
     preloadedState: initialState,
     reducer: rootReducer,
     middleware: middleware,
   });
-
-  return store;
 };
 
 export const getCurrentPathname = (state: RootState) =>
