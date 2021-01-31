@@ -1,5 +1,5 @@
 // The interface that we will use to get Dockernetes API calls from
-import axios, { AxiosInstance } from "axios";
+import axios, { AxiosInstance } from 'axios';
 
 export class ProductionDockernetesClient extends DockernetesClient {
   private axiosClient: AxiosInstance;
@@ -20,11 +20,10 @@ export class ProductionDockernetesClient extends DockernetesClient {
   async getAllContainers(): Promise<object> {
     let response;
     try {
-      response = await this.axiosClient.get("/containers");
+      response = await this.axiosClient.get('/containers');
       if (response.status < 200 || response.status > 300) {
         throw new Error('There was a server error');
       }
-
     } catch (error) {
       throw new Error(error);
     }
@@ -35,11 +34,10 @@ export class ProductionDockernetesClient extends DockernetesClient {
   async getContainerById(id: string): Promise<object> {
     let response;
     try {
-      response = await this.axiosClient.get(`/containers/${id}`)
+      response = await this.axiosClient.get(`/containers/${id}`);
       if (response.status < 200 || response.status > 300) {
         throw new Error('There was a server error');
       }
-
     } catch (error) {
       throw new Error(error);
     }
@@ -66,6 +64,4 @@ export class ProductionDockernetesClient extends DockernetesClient {
   async stopContainerById(id: string): Promise<object> {
     return undefined;
   }
-
 }
-

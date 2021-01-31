@@ -1,8 +1,8 @@
-import {Action, configureStore, getDefaultMiddleware} from '@reduxjs/toolkit';
-import {routerMiddleware} from 'connected-react-router';
-import {createHashHistory} from 'history';
-import {createLogger} from 'redux-logger';
-import {ThunkAction} from 'redux-thunk';
+import { Action, configureStore, getDefaultMiddleware } from '@reduxjs/toolkit';
+import { routerMiddleware } from 'connected-react-router';
+import { createHashHistory } from 'history';
+import { createLogger } from 'redux-logger';
+import { ThunkAction } from 'redux-thunk';
 import createRootReducer from './rootReducer';
 import LogRocket from 'logrocket';
 
