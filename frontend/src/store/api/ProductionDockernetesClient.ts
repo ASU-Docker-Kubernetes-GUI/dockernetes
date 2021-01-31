@@ -46,22 +46,22 @@ export class ProductionDockernetesClient extends DockernetesClient {
   }
 
   async getContainerLogs(id: string): Promise<object> {
-    return undefined;
+    throw new Error('Not Implemented');
   }
 
   async getStatus(): Promise<object> {
-    return undefined;
+    throw new Error('Not Implemented');
   }
 
   async restartContainer(id: string): Promise<object> {
-    return undefined;
+    throw new Error('Not Implemented');
   }
 
   async stopAllContainers(): Promise<object> {
-    return undefined;
+    throw new Error('Not Implemented');
   }
 
   async stopContainerById(id: string): Promise<object> {
-    return undefined;
+    throw new Error('Not Implemented');
   }
 }
