@@ -1,15 +1,13 @@
 package router
 
 import (
-	"github.com/docker/docker/api/server/middleware"
 	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/websocket/v2"
-	"github.com/ivanmartinezmorales/dockernetes-server/server/handlers"
+	"github.com/ivanmartinezmorales/dockernetes/server/handlers"
 )
 
+// CreateDockerRoutes instantiates our Dockernetes Router
 func CreateDockerRoutes(app fiber.Router) {
 	router := app.Group("/api/v1/docker")
-	router.Use(middleware.CORSMiddleware{})
 
 	router.Get("/status", handlers.HandleGetStatus)
 	router.Get("/containers", handlers.HandleGetAllContainers)
@@ -20,5 +18,5 @@ func CreateDockerRoutes(app fiber.Router) {
 	router.Put("/containers/restart/:id", handlers.HandleRestartContainer)
 	router.Post("/containers/create", handlers.HandleCreateContainer)
 
-	router.Get("/containers/logs/:id", websocket.New(handlers.HandleGetContainerLogs))
+	// router.Get("/containers/logs/:id", websocket.New(handlers.HandleGetContainerLogs))
 }

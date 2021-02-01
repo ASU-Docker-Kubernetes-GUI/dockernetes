@@ -10,6 +10,7 @@ require (
 	github.com/docker/docker v20.10.2+incompatible
 	github.com/docker/go-connections v0.4.0 // indirect
 	github.com/docker/go-units v0.4.0 // indirect
+	github.com/gofiber/fiber v1.14.6
 	github.com/gofiber/fiber/v2 v2.3.3
 	github.com/gofiber/websocket/v2 v2.0.2
 	github.com/gogo/protobuf v1.3.2 // indirect

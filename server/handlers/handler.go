@@ -4,7 +4,7 @@ import (
 	"context"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/websocket/v2"
-	client "github.com/ivanmartinezmorales/dockernetes-server/server/docker_client"
+	client "github.com/ivanmartinezmorales/dockernetes/server/docker_client"
 	"time"
 )
 
@@ -32,7 +32,11 @@ func HandleGetAllContainers(ctx *fiber.Ctx) error {
 }
 
 func HandleGetAllContainersByID(ctx *fiber.Ctx) error {
-	return ctx.SendString("Not Implemented")
+	resp, err := dC.GetContainerById(ctx.Params("id"))
+	if err != nil {
+		ctx.JSON(err)
+	}
+	return ctx.JSON(resp)
 }
 
 func HandleCreateContainer(ctx *fiber.Ctx) error {
@@ -40,7 +44,7 @@ func HandleCreateContainer(ctx *fiber.Ctx) error {
 }
 
 func HandleGetContainerLogs(c *websocket.Conn) error {
-	return c.WriteJSON("not implemented")
+	return nil
 }
 
 func HandleStopContainer(ctx *fiber.Ctx) error {
