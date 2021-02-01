@@ -7,5 +7,5 @@ func main() {
 	app.Get("/", func(ctx *fiber.Ctx) error {
 		return ctx.SendString("Hello world")
 	})
-	app.Listen(":5000")
+	app.Listen(":8080")
 }

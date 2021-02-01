@@ -14,11 +14,11 @@ func CreateDockerRoutes(app fiber.Router) {
 	router.Get("/status", handlers.HandleGetStatus)
 	router.Get("/containers", handlers.HandleGetAllContainers)
 	router.Get("/containers/:id", handlers.HandleGetAllContainersByID)
+	router.Get("/containers/stop", handlers.HandleStopAllContainers)
+	router.Get("/containers/stop/:id", handlers.HandleStopContainer)
 
 	router.Put("/containers/restart/:id", handlers.HandleRestartContainer)
 	router.Post("/containers/create", handlers.HandleCreateContainer)
-	router.Delete("/containers/stop", handlers.HandleStopAllContainers)
-	router.Delete("/containers/stop/:id", handlers.HandleStopContainer)
 
 	router.Get("/containers/logs/:id", websocket.New(handlers.HandleGetContainerLogs))
 }
