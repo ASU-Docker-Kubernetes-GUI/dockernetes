@@ -18,7 +18,6 @@ func HandleGetStatus(ctx *fiber.Ctx) error {
 	if err != nil {
 		return ctx.JSON(err)
 	}
-
 	return ctx.JSON(resp)
 }
 
