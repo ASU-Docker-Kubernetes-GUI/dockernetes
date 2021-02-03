@@ -39,7 +39,24 @@ func HandleGetAllContainersByID(ctx *fiber.Ctx) error {
 }
 
 func HandleCreateContainer(ctx *fiber.Ctx) error {
-	return ctx.SendString("Not Implemented")
+	// get the image name that we want to implement
+	imageName := ctx.Params("imageName")
+	if containerName := ctx.Params("containerName"); containerName != "" {
+		err := dC.CreateContainer(imageName, containerName)
+
+		if err != nil {
+			return ctx.JSON(err)
+		}
+
+		return ctx.JSON("Created container successfully")
+	}
+
+	err := dC.CreateContainer(imageName, "")
+
+	if err != nil {
+		return ctx.JSON(err)
+	}
+	return ctx.JSON("created container successfully")
 }
 
 func HandleGetContainerLogs(c *websocket.Conn) error {
@@ -59,7 +76,22 @@ func HandleStopContainer(ctx *fiber.Ctx) error {
 }
 
 func HandleStopAllContainers(ctx *fiber.Ctx) error {
-	return ctx.SendString("Not Implemented")
+	erroredContainers, err := dC.StopAllContainers()
+	if err != nil {
+		return ctx.JSON(err)
+	}
+
+	if len(erroredContainers) > 0 {
+		return ctx.JSON(map[string]interface{}{
+			"erroredContainers": erroredContainers,
+			"timestamp": time.Now().String(),
+		})
+	}
+
+	return ctx.JSON(map[string]interface{}{
+		"timestamp": time.Now().String(),
+		"message": "Stopped all containers successfully",
+	})
 }
 
 func HandleRestartContainer(ctx *fiber.Ctx) error {
