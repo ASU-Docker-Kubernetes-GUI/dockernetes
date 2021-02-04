@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"context"
+	"fmt"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/websocket/v2"
 	client "github.com/ivanmartinezmorales/dockernetes/server/docker_client"
@@ -95,5 +96,17 @@ func HandleStopAllContainers(ctx *fiber.Ctx) error {
 }
 
 func HandleRestartContainer(ctx *fiber.Ctx) error {
-	return ctx.SendString("Not Implemented")
+	containerID := ctx.Params("id")
+	if containerID == "" {
+		return ctx.SendStatus(400)
+	}
+
+	err := dC.RestartContainer(containerID)
+
+	if err != nil {
+		return ctx.SendString(fmt.Sprintf("Failed to restart container with id: %s", containerID))
+
+	}
+
+	return ctx.SendString(fmt.Sprintf("Successfully restarted container with ID: %s", containerID))
 }

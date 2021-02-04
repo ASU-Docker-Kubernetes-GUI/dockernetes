@@ -28,4 +28,5 @@ require (
 	golang.org/x/sys v0.0.0-20210123231150-1d476976d117 // indirect
 	golang.org/x/time v0.0.0-20201208040808-7e3f01d25324 // indirect
 	google.golang.org/grpc v1.35.0 // indirect
+	k8s.io/client-go v11.0.0+incompatible // indirect
 )
