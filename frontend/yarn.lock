@@ -1116,12 +1116,12 @@
   resolved "https://registry.yarnpkg.com/@bcoe/v8-coverage/-/v8-coverage-0.2.3.tgz#75a2e8b51cb758a7553d6804a5932d7aace75c39"
   integrity sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==
 
-"@blueprintjs/core@^3.38.1":
-  version "3.38.1"
-  resolved "https://registry.yarnpkg.com/@blueprintjs/core/-/core-3.38.1.tgz#be71a2a0535ae0ba23a816860e0c1e7987e7e887"
-  integrity sha512-ZBqVfMgeIrXiuprsRxBnLM/MPgPSCRf27uckyhMFHRocyEtFS7zrOGmQeJb1Va0nZ/ufNsYk7EiHVxulb1KkSg==
+"@blueprintjs/core@^3.38.1", "@blueprintjs/core@^3.41.0":
+  version "3.41.0"
+  resolved "https://registry.yarnpkg.com/@blueprintjs/core/-/core-3.41.0.tgz#06c6a3e5b8b4e7341837289ce6cd450d18da3197"
+  integrity sha512-iKH/+eTzDGw8jAGCb7NvcIjpj3AIoou9wRogezOjHHylt3Ks34alkmSBIytPwj+JxBK67c31d0y0F/ppWqSvUQ==
   dependencies:
-    "@blueprintjs/icons" "^3.24.0"
+    "@blueprintjs/icons" "^3.25.1"
     "@types/dom4" "^2.0.1"
     classnames "^2.2"
     dom4 "^2.1.5"
@@ -1152,12 +1152,20 @@
     classnames "^2.2"
     tslib "~1.13.0"
 
-"@blueprintjs/select@^3.15.3":
-  version "3.15.3"
-  resolved "https://registry.yarnpkg.com/@blueprintjs/select/-/select-3.15.3.tgz#21f7efca21fbaa0613df412ef349dfa852017e3b"
-  integrity sha512-fsuAgPNiavE5YjzKf2X5a5LryFLX34prpU/2ZJ1WxkXzXFqZAPtzikNcRHdCWEwWddXxwM40LBPUTyGXHI023w==
+"@blueprintjs/icons@^3.25.1":
+  version "3.25.1"
+  resolved "https://registry.yarnpkg.com/@blueprintjs/icons/-/icons-3.25.1.tgz#530c06a72b759da5c3cfbb01eaf2ab987a67129d"
+  integrity sha512-AppGf5IyjjKa/Zlre4pHWbDnsI7nefurXKku8Yf/B14bDAB2a8lzP6HCoTowAW4fHryTwE5Pzp9zEJYvofkUEg==
   dependencies:
-    "@blueprintjs/core" "^3.38.1"
+    classnames "^2.2"
+    tslib "~1.13.0"
+
+"@blueprintjs/select@^3.15.8":
+  version "3.15.8"
+  resolved "https://registry.yarnpkg.com/@blueprintjs/select/-/select-3.15.8.tgz#20e3621789322fcdc630b9da9e3c15698853b8b6"
+  integrity sha512-PNpUolmXP/flKPsUjlMXu4p11l+otvOEsO3h7RkN3AT7Uoos2oc5WU9QZMfX8Y5/c+ecOPZlh7eJO2ZXH/5Rxw==
+  dependencies:
+    "@blueprintjs/core" "^3.41.0"
     classnames "^2.2"
     tslib "~1.13.0"
 
@@ -1814,10 +1822,15 @@
   resolved "https://registry.yarnpkg.com/@types/minimatch/-/minimatch-3.0.3.tgz#3dca0e3f33b200fc7d1139c0cd96c1268cadfd9d"
   integrity sha512-tHq6qdbT9U1IRSGf14CL0pUlULksvY9OZ+5eEgl1N7t+OA3tGvNpxJCzuKQlsNgCVwbAs670L1vcVQi8j9HjnA==
 
-"@types/node@*", "@types/node@^14.14.22":
+"@types/node@*":
   version "14.14.22"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-14.14.22.tgz#0d29f382472c4ccf3bd96ff0ce47daf5b7b84b18"
   integrity sha512-g+f/qj/cNcqKkc3tFqlXOYjrmZA+jNBiDzbP3kH+B+otKFqAdPgVTGP1IeKRdMml/aE69as5S4FqtxAbl+LaMw==
+
+"@types/node@^12.0.0":
+  version "12.20.5"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-12.20.5.tgz#4ca82a766f05c359fd6c77505007e5a272f4bb9b"
+  integrity sha512-5Oy7tYZnu3a4pnJ//d4yVvOImExl4Vtwf0D40iKUlU+XlUsyV9iyFWyCFlwy489b72FMAik/EFwRkNLjjOdSPg==
 
 "@types/normalize-package-data@^2.4.0":
   version "2.4.0"
@@ -1882,15 +1895,6 @@
   version "17.0.0"
   resolved "https://registry.yarnpkg.com/@types/react/-/react-17.0.0.tgz#5af3eb7fad2807092f0046a1302b7823e27919b8"
   integrity sha512-aj/L7RIMsRlWML3YB6KZiXB3fV2t41+5RBGYF8z+tAKU43Px8C3cYUZsDvf1/+Bm4FK21QWBrDutu8ZJ/70qOw==
-  dependencies:
-    "@types/prop-types" "*"
-    csstype "^3.0.2"
-
-
-"@types/react@^16.9.53":
-  version "16.14.2"
-  resolved "https://registry.yarnpkg.com/@types/react/-/react-16.14.2.tgz#85dcc0947d0645349923c04ccef6018a1ab7538c"
-  integrity sha512-BzzcAlyDxXl2nANlabtT4thtvbbnhee8hMmH/CcJrISDBVcJS1iOsP1f0OAgSdGE0MsY9tqcrb9YoZcOFv9dbQ==
   dependencies:
     "@types/prop-types" "*"
     csstype "^3.0.2"
