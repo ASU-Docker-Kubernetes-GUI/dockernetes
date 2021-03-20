@@ -1,5 +1,7 @@
+import { IconName, Intent, NonIdealState } from '@blueprintjs/core';
 import React, { ReactElement } from 'react';
-import { IconName, Intent, NonIdealState, Tag } from '@blueprintjs/core';
+import { useSelector } from 'react-redux';
+import ContainerListItem from '../../components/ContainerListItem';
 import {
   checkApiStatus,
   checkDockerStatus,
@@ -7,7 +9,6 @@ import {
   getDockerStatus,
   Status,
 } from './HomeSlice';
-import { useSelector } from 'react-redux';
 
 type NoContainersFoundProps = {
   icon: IconName;
@@ -61,19 +62,12 @@ function HomeContainer() {
 
   return (
     <div style={{ paddingTop: '1rem' }}>
-      <NoContainersFound
-        icon="cross"
-        description={description}
-        message="No Containers Found"
-      />
-      <div>
-        <p>{message(dockerStatus)}</p>
-        <Tag intent={statusColor(dockerStatus)} round />
-      </div>
-      <div>
-        <p>{message(apiStatus)}</p>
-        <Tag intent={statusColor(apiStatus)} round />
-      </div>
+      {/*<NoContainersFound*/}
+      {/*  icon="cross"*/}
+      {/*  description={description}*/}
+      {/*  message="No Containers Found"*/}
+      {/*/>*/}
+      <ContainerListItem />
     </div>
   );
 }
