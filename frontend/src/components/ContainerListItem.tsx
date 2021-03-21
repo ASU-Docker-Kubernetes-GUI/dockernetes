@@ -44,7 +44,7 @@ class ContainerListItem extends Component<ContainerListItemProps, any> {
     return (
       <Card id={id} elevation={Elevation.THREE}>
         <div>
-          <h2>
+          <h2 className={'bp3-heading'}>
             {`${name}`}{' '}
             <ContainerStatus
               status={status === undefined ? 'running' : status}
@@ -52,12 +52,14 @@ class ContainerListItem extends Component<ContainerListItemProps, any> {
           </h2>
           <Divider />
           <br />
-          <p>ID: {id}</p>
-          <p>Image Name: {image}</p>
-          <p>Created Time: {created}</p>
-          <p>Host: {host}</p>
-          <p>Published Ports: {publishedPorts}</p>
-          <p>Ownership: {ownership}</p>
+          <p className={'bp3-running-text'}>ID: {id}</p>
+          <p className={'bp3-running-text'}>Image Name: {image}</p>
+          <p className={'bp3-running-text'}>Created Time: {created}</p>
+          <p className={'bp3-running-text'}>Host: {host}</p>
+          <p className={'bp3-running-text'}>
+            Published Ports: {publishedPorts}
+          </p>
+          <p className={'bp3-running-text'}>Ownership: {ownership}</p>
         </div>
         <Divider />
         <ContainerButtons containerId={'1234'} />

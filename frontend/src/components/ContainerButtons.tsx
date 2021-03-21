@@ -1,4 +1,4 @@
-import { Button, ButtonGroup, Intent, Toast, Toaster } from '@blueprintjs/core';
+import { Button, ButtonGroup, Intent, Toaster } from '@blueprintjs/core';
 import React from 'react';
 
 export const AppToaster = Toaster.create({

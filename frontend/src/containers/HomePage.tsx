@@ -1,8 +1,6 @@
 import React from 'react';
 import HomeContainer from '../features/home/Home';
 
-function HomePage() {
+export default function HomePage() {
   return <HomeContainer />;
 }
-
-export default HomePage;
