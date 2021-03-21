@@ -1,5 +1,6 @@
 import { Card, Elevation, Tag, Intent, Divider } from '@blueprintjs/core';
 import React, { Component } from 'react';
+import { ContainerButtons } from './ContainerButtons';
 
 type ContainerStatusProps = { status: string };
 
@@ -16,17 +17,6 @@ function ContainerStatus(props: ContainerStatusProps) {
   );
 }
 
-interface ContainerButtonProps {
-  containerId: string;
-  status: string;
-}
-
-function ContainerButton(props: ContainerButtonProps) {
-  const { containerId, status } = props;
-  const StartButton =
-
-}
-
 export type ContainerListItemProps = {
   id?: string;
   name?: string; // the name of the container
@@ -38,7 +28,7 @@ export type ContainerListItemProps = {
   ownership?: string; // who owns this damn container
 };
 
-class ContainerListItem extends Component<ContainerListItemProps> {
+class ContainerListItem extends Component<ContainerListItemProps, any> {
   render() {
     const {
       id,
@@ -52,7 +42,7 @@ class ContainerListItem extends Component<ContainerListItemProps> {
     } = this.props;
 
     return (
-      <Card interactive id={id} elevation={Elevation.THREE}>
+      <Card id={id} elevation={Elevation.THREE}>
         <div>
           <h2>
             {`${name}`}{' '}
@@ -61,13 +51,16 @@ class ContainerListItem extends Component<ContainerListItemProps> {
             />
           </h2>
           <Divider />
-          <p>Id: {id}</p>
+          <br />
+          <p>ID: {id}</p>
           <p>Image Name: {image}</p>
           <p>Created Time: {created}</p>
           <p>Host: {host}</p>
           <p>Published Ports: {publishedPorts}</p>
           <p>Ownership: {ownership}</p>
         </div>
+        <Divider />
+        <ContainerButtons containerId={'1234'} />
       </Card>
     );
   }
