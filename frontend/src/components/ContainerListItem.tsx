@@ -18,11 +18,13 @@ function ContainerStatus(props: ContainerStatusProps) {
 
 interface ContainerButtonProps {
   containerId: string;
-  handlerFunction: Function;
+  status: string;
 }
 
 function ContainerButton(props: ContainerButtonProps) {
-  const { containerId } = props;
+  const { containerId, status } = props;
+  const StartButton =
+
 }
 
 export type ContainerListItemProps = {
