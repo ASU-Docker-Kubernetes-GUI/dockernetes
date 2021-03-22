@@ -17,7 +17,7 @@ function ContainerStatus(props: ContainerStatusProps) {
   );
 }
 
-export type ContainerListItemProps = {
+export interface ContainerListItemProps {
   id?: string;
   name?: string; // the name of the container
   status?: string; // The status will either be: running/stopped
@@ -26,7 +26,7 @@ export type ContainerListItemProps = {
   host?: string; // who is hosting this container
   publishedPorts?: string; // what ports are public
   ownership?: string; // who owns this damn container
-};
+}
 
 class ContainerListItem extends Component<ContainerListItemProps, any> {
   render() {
