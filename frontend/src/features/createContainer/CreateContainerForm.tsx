@@ -1,5 +1,5 @@
 import { Button, FormGroup, InputGroup } from '@blueprintjs/core';
-import React, { Component } from 'react';
+import React from 'react';
 
 export class CreateContainerForm extends React.PureComponent {
   private containerNameInput = React.createRef<HTMLInputElement>();

@@ -11,6 +11,7 @@ export default class ApplicationRouter extends React.PureComponent {
   LazyCreateContainerFormContainer = React.lazy(
     () => import('./CreateContainer'),
   );
+  LazyContainerListContainer = React.lazy(() => import('./ContainerListPage'));
 
   HomePage = (props: Record<string, any>) => (
     <React.Suspense fallback={this.LazyLoadingScreen}>
@@ -24,6 +25,12 @@ export default class ApplicationRouter extends React.PureComponent {
     </React.Suspense>
   );
 
+  ContainerListPage = (props: Record<string, any>) => (
+    <React.Suspense fallback={this.LazyLoadingScreen}>
+      <this.LazyContainerListContainer {...props} />
+    </React.Suspense>
+  );
+
   public render() {
     return (
       <App>
@@ -33,6 +40,10 @@ export default class ApplicationRouter extends React.PureComponent {
           <Route
             path={route.CREATE_CONTAINERS.path}
             component={this.CreateContainerPage}
+          />
+          <Route
+            path={route.CONTAINERS.path}
+            component={this.ContainerListPage}
           />
         </Switch>
       </App>

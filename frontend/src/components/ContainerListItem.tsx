@@ -42,7 +42,7 @@ class ContainerListItem extends Component<ContainerListItemProps, any> {
     } = this.props;
 
     return (
-      <Card id={id} elevation={Elevation.THREE}>
+      <Card id={id} elevation={Elevation.THREE} style={{ margin: '1em' }}>
         <div>
           <h2 className={'bp3-heading'}>
             {`${name}`}{' '}
