@@ -2,6 +2,7 @@ import { IconName, Intent, NonIdealState } from '@blueprintjs/core';
 import React, { ReactElement } from 'react';
 import { useSelector } from 'react-redux';
 import ContainerListItem from '../../components/ContainerListItem';
+import HomeCard from '../../components/HomeCard';
 import {
   checkApiStatus,
   checkDockerStatus,
@@ -62,12 +63,7 @@ function HomeContainer() {
 
   return (
     <div style={{ paddingTop: '1rem' }}>
-      {/*<NoContainersFound*/}
-      {/*  icon="cross"*/}
-      {/*  description={description}*/}
-      {/*  message="No Containers Found"*/}
-      {/*/>*/}
-      <ContainerListItem />
+      <HomeCard />
     </div>
   );
 }
