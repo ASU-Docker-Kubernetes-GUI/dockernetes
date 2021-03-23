@@ -1,7 +1,14 @@
-import { IconName, Intent, NonIdealState } from '@blueprintjs/core';
+import {
+  Card,
+  Elevation,
+  IconName,
+  Intent,
+  Label,
+  NonIdealState,
+  Tag,
+} from '@blueprintjs/core';
 import React, { ReactElement } from 'react';
 import { useSelector } from 'react-redux';
-import ContainerListItem from '../../components/ContainerListItem';
 import HomeCard from '../../components/HomeCard';
 import {
   checkApiStatus,
@@ -61,7 +68,20 @@ function HomeContainer() {
   const dockerStatus = useSelector(getDockerStatus);
   const apiStatus = useSelector(getApiStatus);
 
-  return <div style={{ paddingTop: '1rem' }}></div>;
+  return (
+    <div style={{ padding: '1rem' }}>
+      <h1>Dashboard</h1>
+      <HomeCard
+        id={'1234'}
+        name={'local'}
+        containerCount={12}
+        imageCount={15}
+        dockerRootDirectory={'/var/sock/docker'}
+        cpuCount={4}
+        memoryCount={21348984}
+      />
+    </div>
+  );
 }
 
 export default HomeContainer;

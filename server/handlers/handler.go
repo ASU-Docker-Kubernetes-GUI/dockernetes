@@ -11,11 +11,11 @@ import (
 
 var AppContext = context.Background()
 
-var dC = client.NewDockerClient(&AppContext)
+var dockerClient = client.NewDockerClient(&AppContext)
 
 // HandleGetStatus returns the current status of the docker container
 func HandleGetStatus(ctx *fiber.Ctx) error {
-	resp, err := dC.GetDockerStatus()
+	resp, err := dockerClient.GetDockerStatus()
 	if err != nil {
 		return ctx.JSON(err)
 	}
@@ -23,7 +23,7 @@ func HandleGetStatus(ctx *fiber.Ctx) error {
 }
 
 func HandleGetAllContainers(ctx *fiber.Ctx) error {
-	resp, err := dC.GetAllContainers()
+	resp, err := dockerClient.GetAllContainers()
 	if err != nil {
 		return ctx.JSON(err)
 	}
@@ -32,7 +32,7 @@ func HandleGetAllContainers(ctx *fiber.Ctx) error {
 }
 
 func HandleGetAllContainersByID(ctx *fiber.Ctx) error {
-	resp, err := dC.GetContainerById(ctx.Params("id"))
+	resp, err := dockerClient.GetContainerById(ctx.Params("id"))
 	if err != nil {
 		ctx.JSON(err)
 	}
@@ -43,7 +43,7 @@ func HandleCreateContainer(ctx *fiber.Ctx) error {
 	// get the image name that we want to implement
 	imageName := ctx.Params("imageName")
 	if containerName := ctx.Params("containerName"); containerName != "" {
-		err := dC.CreateContainer(imageName, containerName)
+		err := dockerClient.CreateContainer(imageName, containerName)
 
 		if err != nil {
 			return ctx.JSON(err)
@@ -52,7 +52,7 @@ func HandleCreateContainer(ctx *fiber.Ctx) error {
 		return ctx.JSON("Created container successfully")
 	}
 
-	err := dC.CreateContainer(imageName, "")
+	err := dockerClient.CreateContainer(imageName, "")
 
 	if err != nil {
 		return ctx.JSON(err)
@@ -65,7 +65,7 @@ func HandleGetContainerLogs(c *websocket.Conn) error {
 }
 
 func HandleStopContainer(ctx *fiber.Ctx) error {
-	err := dC.StopContainer(ctx.Params("id"))
+	err := dockerClient.StopContainer(ctx.Params("id"))
 	t := time.Now()
 
 	if err != nil {
@@ -77,7 +77,7 @@ func HandleStopContainer(ctx *fiber.Ctx) error {
 }
 
 func HandleStopAllContainers(ctx *fiber.Ctx) error {
-	erroredContainers, err := dC.StopAllContainers()
+	erroredContainers, err := dockerClient.StopAllContainers()
 	if err != nil {
 		return ctx.JSON(err)
 	}
@@ -85,13 +85,13 @@ func HandleStopAllContainers(ctx *fiber.Ctx) error {
 	if len(erroredContainers) > 0 {
 		return ctx.JSON(map[string]interface{}{
 			"erroredContainers": erroredContainers,
-			"timestamp": time.Now().String(),
+			"timestamp":         time.Now().String(),
 		})
 	}
 
 	return ctx.JSON(map[string]interface{}{
 		"timestamp": time.Now().String(),
-		"message": "Stopped all containers successfully",
+		"message":   "Stopped all containers successfully",
 	})
 }
 
@@ -101,7 +101,7 @@ func HandleRestartContainer(ctx *fiber.Ctx) error {
 		return ctx.SendStatus(400)
 	}
 
-	err := dC.RestartContainer(containerID)
+	err := dockerClient.RestartContainer(containerID)
 
 	if err != nil {
 		return ctx.SendString(fmt.Sprintf("Failed to restart container with id: %s", containerID))

@@ -1,18 +1,67 @@
-import { Card } from '@blueprintjs/core';
+import { Card, Elevation, Icon, Intent, Tag } from '@blueprintjs/core';
 import React from 'react';
 
-/**
- * TODO: We're going to need the following here:
- * - The number of containers that are currently running.
- * - The status of our docker environment
- * - How much is the uptime
- * - When a user clicks on the header tag, then it will take them into their respective environment
- * @constructor
- */
-export default function HomeCard() {
+export interface IHomeCardProps {
+  id: string;
+  name: string;
+  containerCount: number;
+  imageCount: number;
+  dockerRootDirectory: string;
+  cpuCount: number;
+  memoryCount: number;
+}
+
+export default function HomeCard(props: IHomeCardProps) {
+  const {
+    id,
+    name,
+    containerCount,
+    imageCount,
+    dockerRootDirectory,
+    cpuCount,
+    memoryCount,
+  } = props;
   return (
-    <Card>
-      <h1>Hello world</h1>
+    <Card id={id} elevation={Elevation.THREE}>
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          margin: 'auto',
+        }}
+      >
+        <h2>{name}</h2>
+        <Tag intent={Intent.SUCCESS} round>
+          up
+        </Tag>
+      </div>
+      <div>
+        <p>
+          <Icon icon="layers" /> Containers: {containerCount}
+        </p>
+        <p>
+          <Icon icon="database" />
+          Volumes: {containerCount}
+        </p>
+        <p>
+          <Icon icon="folder-close" /> Images: {imageCount}
+        </p>
+        <p>Docker root directory: {dockerRootDirectory}</p>
+        <p>Number of CPUs: {cpuCount}</p>
+        <p>Memory in use: {formatBytes(memoryCount, 1)}</p>
+      </div>
     </Card>
   );
+}
+
+function formatBytes(bytes: number, decimals = 2) {
+  if (bytes === 0) return '0 Bytes';
+
+  const k = 1024;
+  const dm = decimals < 0 ? 0 : decimals;
+  const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+
+  return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
 }
