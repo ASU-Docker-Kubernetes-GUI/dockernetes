@@ -61,11 +61,7 @@ function HomeContainer() {
   const dockerStatus = useSelector(getDockerStatus);
   const apiStatus = useSelector(getApiStatus);
 
-  return (
-    <div style={{ paddingTop: '1rem' }}>
-      <HomeCard />
-    </div>
-  );
+  return <div style={{ paddingTop: '1rem' }}></div>;
 }
 
 export default HomeContainer;
