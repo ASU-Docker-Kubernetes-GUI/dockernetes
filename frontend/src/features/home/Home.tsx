@@ -31,17 +31,6 @@ function NoContainersFound(props: NoContainersFoundProps): ReactElement {
   );
 }
 
-export const statusColor = (status: Status): Intent => {
-  switch (status) {
-    case Status.ON:
-      return 'success';
-    case Status.DEGRADED:
-      return 'warning';
-    case Status.OFF:
-      return 'danger';
-  }
-};
-
 export const message = (status: Status): string => {
   switch (status) {
     case Status.ON:
@@ -61,27 +50,28 @@ const description = (
   </>
 );
 
-function HomeContainer() {
-  checkDockerStatus();
-  checkApiStatus();
+class HomeContainer extends React.Component {
+  componentDidMount() {
+    checkDockerStatus();
+    checkApiStatus();
+  }
 
-  const dockerStatus = useSelector(getDockerStatus);
-  const apiStatus = useSelector(getApiStatus);
-
-  return (
-    <div style={{ padding: '1rem' }}>
-      <h1>Dashboard</h1>
-      <HomeCard
-        id={'1234'}
-        name={'local'}
-        containerCount={12}
-        imageCount={15}
-        dockerRootDirectory={'/var/sock/docker'}
-        cpuCount={4}
-        memoryCount={21348984}
-      />
-    </div>
-  );
+  render() {
+    return (
+      <div style={{ padding: '1rem' }}>
+        <h1>Dashboard</h1>
+        <HomeCard
+          id={'1234'}
+          name={'local'}
+          containerCount={12}
+          imageCount={15}
+          dockerRootDirectory={'/var/sock/docker'}
+          cpuCount={4}
+          memoryCount={21348984}
+        />
+      </div>
+    );
+  }
 }
 
 export default HomeContainer;

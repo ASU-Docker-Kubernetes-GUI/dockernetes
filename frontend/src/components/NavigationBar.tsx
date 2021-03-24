@@ -21,7 +21,6 @@ import {
   getApiStatus,
   getDockerStatus,
 } from '../features/home/HomeSlice';
-import { statusColor, message } from '../features/home/Home';
 
 interface INavigationItemProps {
   route: string;
@@ -92,14 +91,6 @@ function Navigation(props: NavigationBarProps): ReactElement {
       currentLocation={currentPage}
     />
   ));
-
-  const ConnectionStatus = (
-    <>
-      <Tag intent={statusColor(dockerStatus)} />
-      <br />
-      <Tag intent={statusColor(apiStatus)} />
-    </>
-  );
 
   return (
     <Navbar className={Classes.DARK}>

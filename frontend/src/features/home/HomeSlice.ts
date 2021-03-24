@@ -37,6 +37,7 @@ const homeSlice = createSlice({
 
 export const checkApiStatus = (): AppThunk => {
   return async (dispatch) => {
+    console.log('Making call to backend to ping');
     const response = await fetch('http://localhost:8080/api/v1/ping');
     if (!response.ok) {
       dispatch(apiOff());

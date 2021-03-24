@@ -54,11 +54,16 @@ export default function HomeCard(props: IHomeCardProps) {
   );
 }
 
+/**
+ * Formats the bytes into some human readable format, i.e. 1.2 GB, 3 MB,
+ * @param bytes the number of bytes to process
+ * @param decimals the number of decimal points to round it out to
+ */
 function formatBytes(bytes: number, decimals = 2) {
   if (bytes === 0) return '0 Bytes';
 
   const k = 1024;
-  const dm = decimals < 0 ? 0 : decimals;
+  const dm: number = decimals < 0 ? 0 : decimals;
   const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
 
   const i = Math.floor(Math.log(bytes) / Math.log(k));
