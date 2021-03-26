@@ -15,17 +15,37 @@ export class Client implements DockernetesClient {
 
   getStatus = async (): Promise<object> => await this.axiosClient.get('status');
 
-  async createContainer(
+  createContainer = async (
     imageName: string,
     containerName: string,
-  ): Promise<object> {
-    return undefined;
-  }
+  ): Promise<object> => {
+    if (imageName == null) {
+      throw Error('Image names cannot be null');
+    }
+
+    let requestParams = {
+      imageName: imageName,
+      containerName: containerName,
+    };
+
+    const response = await this.axiosClient.post(
+      'containers/create',
+      requestParams,
+    );
+
+    const { data, status } = response;
+
+    if (status > 200) {
+      throw Error('Request to create container was unsuccessful');
+    }
+
+    return data;
+  };
 
   getAllContainers = async (): Promise<object> =>
     await this.axiosClient.get('containers');
 
-  async getContainerById(containerId: string): Promise<object> {
+  getContainerById = async (containerId: string): Promise<object> => {
     if (containerId == '') {
       throw Error('ContainerId cannot be empty');
     }
@@ -35,21 +55,44 @@ export class Client implements DockernetesClient {
     const { data, status } = response;
 
     if (status > 200) {
-      return {}; // return an empty struct
+      throw Error('Request to API client unsuccessful');
     }
 
     return data;
-  }
+  };
 
-  restartContainer(containerId: string): object {
-    return undefined;
-  }
+  restartContainer = async (containerId: string): Promise<object> => {
+    if (containerId == '') {
+      throw Error('ContainerId cannot be empty');
+    }
 
-  stopAllContainers(): object {
-    return undefined;
-  }
+    const response = await this.axiosClient.get(`restart/${containerId}`);
 
-  stopContainer(containerId: string): object {
-    return undefined;
-  }
+    const { data, status } = response;
+
+    if (status > 200) {
+      throw Error('Request to restart containers was unsuccessful');
+    }
+
+    return data;
+  };
+
+  stopAllContainers = async (): Promise<object> =>
+    await this.axiosClient.get('stop');
+
+  stopContainer = async (containerId: string): Promise<object> => {
+    if (containerId == '') {
+      throw Error('ContainerId cannot be empty');
+    }
+
+    const response = await this.axiosClient.get(`stop/${containerId}`);
+
+    const { data, status } = response;
+
+    if (status > 200) {
+      throw Error('Request to restart containers was unsuccessful');
+    }
+
+    return data;
+  };
 }
