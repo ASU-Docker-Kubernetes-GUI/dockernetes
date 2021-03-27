@@ -13,6 +13,10 @@ var AppContext = context.Background()
 
 var dockerClient = client.NewDockerClient(&AppContext)
 
+func handlePing(ctx *fiber.Ctx) error {
+	return ctx.SendString("ok")
+}
+
 // HandleGetStatus returns the current status of the docker container
 func HandleGetStatus(ctx *fiber.Ctx) error {
 	resp, err := dockerClient.GetDockerStatus()
