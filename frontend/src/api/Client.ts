@@ -25,13 +25,19 @@ export class Client implements DockernetesClient {
   getAllContainers = async (): Promise<object> =>
     await this.axiosClient.get('containers');
 
-  async getContainerById(containerId: string): object {
-    var response;
-    try {
-      response = await this.axiosClient.get(`/containers/${containerId}`);
-    } catch (e) {}
+  async getContainerById(containerId: string): Promise<object> {
+    if (containerId == '') {
+      throw Error('ContainerId cannot be empty');
+    }
 
-    const { data } = response;
+    const response = await this.axiosClient.get(`/containers/${containerId}`);
+
+    const { data, status } = response;
+
+    if (status > 200) {
+      return {}; // return an empty struct
+    }
+
     return data;
   }
 
