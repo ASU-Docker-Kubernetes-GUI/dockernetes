@@ -9,12 +9,12 @@ import (
 func CreateDockerRoutes(app fiber.Router) {
 	router := app.Group("/api/v1/docker")
 
+	router.Get("/ping", handlers.HandlePing)
 	router.Get("/status", handlers.HandleGetStatus)
 	router.Get("/containers", handlers.HandleGetAllContainers)
 	router.Get("/containers/:id", handlers.HandleGetAllContainersByID)
 	router.Get("/containers/stop", handlers.HandleStopAllContainers)
 	router.Get("/containers/stop/:id", handlers.HandleStopContainer)
-
 	router.Put("/containers/restart/:id", handlers.HandleRestartContainer)
 	router.Post("/containers/create", handlers.HandleCreateContainer)
 

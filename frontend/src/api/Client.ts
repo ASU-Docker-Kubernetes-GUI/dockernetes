@@ -13,7 +13,14 @@ export class Client implements DockernetesClient {
 
   ping = async (): Promise<object> => await this.axiosClient.get('ping');
 
-  getStatus = async (): Promise<object> => await this.axiosClient.get('status');
+  getStatus = async (): Promise<object> => {
+    const response = await this.axiosClient.get('status');
+    if (response.status != 200) {
+      throw new Error('Failed to get Docker info');
+    }
+
+    return response.data;
+  };
 
   createContainer = async (
     imageName: string,
@@ -96,3 +103,12 @@ export class Client implements DockernetesClient {
     return data;
   };
 }
+
+export type DockerStatus = {
+  id: string;
+  environmentName: string;
+  containerCount: number;
+  dockerRootDirectory: string;
+  cpuCount: number;
+  memoryCount: number;
+};

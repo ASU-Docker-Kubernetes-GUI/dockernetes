@@ -13,7 +13,8 @@ var AppContext = context.Background()
 
 var dockerClient = client.NewDockerClient(&AppContext)
 
-func handlePing(ctx *fiber.Ctx) error {
+// HandlePing returns a ping back to the person that requested it.
+func HandlePing(ctx *fiber.Ctx) error {
 	return ctx.SendString("ok")
 }
 
@@ -21,7 +22,7 @@ func handlePing(ctx *fiber.Ctx) error {
 func HandleGetStatus(ctx *fiber.Ctx) error {
 	resp, err := dockerClient.GetDockerStatus()
 	if err != nil {
-		return ctx.JSON(err)
+		return ctx.JSON(" ")
 	}
 	return ctx.JSON(resp)
 }

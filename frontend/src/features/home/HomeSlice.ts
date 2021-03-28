@@ -1,5 +1,14 @@
-import { createSlice } from '@reduxjs/toolkit';
+import {
+  createSlice,
+  createAsyncThunk,
+  createAction,
+  Slice,
+  Actions,
+  CaseReducerActions,
+} from '@reduxjs/toolkit';
+import { DockernetesClient } from '../../api/DockernetesClient';
 import { AppThunk, RootState } from '../../store/store';
+import { Client } from '../../api/Client';
 
 export enum Status {
   ON,
@@ -7,71 +16,54 @@ export enum Status {
   OFF,
 }
 
+const dockernetesClient = new Client();
+
 const homeSlice = createSlice({
   name: 'home',
   initialState: {
-    dockerStatus: Status.OFF,
     apiStatus: Status.OFF,
+    environmentName: '',
+    containerCount: 0,
+    dockerRootDirectory: '',
+    cpuCount: 0,
+    memoryCount: 0,
+    errorMessage: '',
   },
-  reducers: {
-    dockerReady: (state) => {
-      state.dockerStatus = Status.ON;
+  reducers: {},
+  extraReducers: {
+    [fetchApiStatus.pending]: (state, action) => {
+      state.apiStatus = Status.DEGRADED;
     },
-    dockerDegraded: (state) => {
-      state.dockerStatus = Status.DEGRADED;
+    [fetchApiStatus.fulfilled]: (state, action) => {
+      state.apiStatus = action.payload;
     },
-    dockerOff: (state) => {
-      state.dockerStatus = Status.OFF;
+    [fetchApiStatus.rejected]: (state, action) => {
+      state.apiStatus = Status.OFF;
     },
-    apiOn: (state) => {
-      state.dockerStatus = Status.OFF;
-    },
-    apiDegraded: (state) => {
-      state.dockerStatus = Status.OFF;
-    },
-    apiOff: (state) => {
-      state.dockerStatus = Status.OFF;
-    },
+    [fetchDockerStatus.fulfilled]: (state, action) => {},
   },
 });
 
-export const checkApiStatus = (): AppThunk => {
-  return async (dispatch) => {
-    console.log('Making call to backend to ping');
-    const response = await fetch('http://localhost:8080/api/v1/ping');
-    if (!response.ok) {
-      dispatch(apiOff());
-    } else if (response.status >= 300 && response.status < 500) {
-      dispatch(apiDegraded());
-    } else {
-      dispatch(apiOn());
+export const fetchApiStatus = createAsyncThunk(
+  'home/fetchApiStatus',
+  async () => {
+    let response;
+    try {
+      response = await dockernetesClient.ping();
+    } catch (e) {
+      return Status.OFF;
     }
-  };
-};
 
-export const checkDockerStatus = (): AppThunk => {
-  return async (dispatch) => {
-    const response = await fetch('http://localhost:8080/api/v1/status');
-    if (!response.ok || response.status > 500) {
-      dispatch(dockerOff());
-    } else if (response.status >= 300 && response.status < 500) {
-      dispatch(dockerDegraded());
-    } else {
-      dispatch(dockerReady());
-    }
-  };
-};
+    return Status.ON;
+  },
+);
 
-export const {
-  dockerReady,
-  dockerDegraded,
-  dockerOff,
-  apiOn,
-  apiDegraded,
-  apiOff,
-} = homeSlice.actions;
+export const fetchDockerStatus = createAsyncThunk(
+  'home/fetchDockerStatus',
+  async () => {
+    let response = await dockernetesClient.getStatus();
+    return response;
+  },
+);
 
 export default homeSlice.reducer;
-
-export const getDockerStatus = (state: RootState) => state.home.dockerStatus;
-export const getApiStatus = (state: RootState) => state.home.apiStatus;
