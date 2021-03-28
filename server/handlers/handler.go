@@ -11,7 +11,7 @@ import (
 
 var AppContext = context.Background()
 
-var dockerClient = client.NewDockerClient(&AppContext)
+var dockerClient = client.NewDockerClient(&AppContext, Docker.)
 
 // HandlePing returns a ping back to the person that requested it.
 func HandlePing(ctx *fiber.Ctx) error {
@@ -66,6 +66,7 @@ func HandleCreateContainer(ctx *fiber.Ctx) error {
 }
 
 func HandleGetContainerLogs(c *websocket.Conn) error {
+
 	return nil
 }
 

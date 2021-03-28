@@ -1,12 +1,15 @@
 package client
 
 import (
+	"archive/tar"
+	"bytes"
 	"context"
 	"errors"
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/container"
 	docker "github.com/docker/docker/client"
 	"io"
+	"os"
 	"strings"
 )
 
@@ -151,8 +154,6 @@ func (d *dockerClient) GetContainerLogs(containerID string) (*io.ReadCloser, err
 			return nil, err
 		}
 
-		// TODO: Fix this with: https://stackoverflow.com/a/48305795
-		// NOTE: Demultiplex this in order to stream it
 		return &logs, nil
 	}
 }
@@ -201,4 +202,13 @@ func (d *dockerClient) StopContainer(containerID string) error {
 	}
 
 	return nil
+}
+
+func (d *dockerClient) CreateContainerFromDockerfile(dockerfile string) error {
+	buf := new(bytes.Buffer)
+	tw := tar.NewWriter(buf)
+	defer tw.Close()
+
+	dockerFileReader, err := os.Open(dockerfile)
+
 }
