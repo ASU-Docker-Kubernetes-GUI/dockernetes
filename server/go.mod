@@ -12,6 +12,7 @@ require (
 	github.com/docker/go-units v0.4.0 // indirect
 	github.com/gofiber/fiber v1.14.6
 	github.com/gofiber/fiber/v2 v2.3.3
+	github.com/gofiber/websocket v0.5.1 // indirect
 	github.com/gofiber/websocket/v2 v2.0.2
 	github.com/gogo/protobuf v1.3.2 // indirect
 	github.com/gorilla/mux v1.8.0 // indirect
