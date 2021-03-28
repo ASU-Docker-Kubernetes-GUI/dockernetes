@@ -22,12 +22,17 @@ export class Client implements DockernetesClient {
     return undefined;
   }
 
-  getAllContainers(): object {
-    return undefined;
-  }
+  getAllContainers = async (): Promise<object> =>
+    await this.axiosClient.get('containers');
 
-  getContainerById(containerId: string): object {
-    return undefined;
+  async getContainerById(containerId: string): object {
+    var response;
+    try {
+      response = await this.axiosClient.get(`/containers/${containerId}`);
+    } catch (e) {}
+
+    const { data } = response;
+    return data;
   }
 
   restartContainer(containerId: string): object {
