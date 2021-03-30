@@ -11,7 +11,7 @@ import (
 
 var AppContext = context.Background()
 
-var dockerClient = client.NewDockerClient(&AppContext, Docker.)
+var dockerClient = client.NewDockerClient(&AppContext)
 
 // HandlePing returns a ping back to the person that requested it.
 func HandlePing(ctx *fiber.Ctx) error {
@@ -65,8 +65,8 @@ func HandleCreateContainer(ctx *fiber.Ctx) error {
 	return ctx.JSON("created container successfully")
 }
 
+// HandlerGetContainerLogs not sure what needs to happen here, but it's just killing me tbh
 func HandleGetContainerLogs(c *websocket.Conn) error {
-
 	return nil
 }
 

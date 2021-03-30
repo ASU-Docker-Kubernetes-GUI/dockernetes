@@ -1,15 +1,12 @@
 package client
 
 import (
-	"archive/tar"
-	"bytes"
 	"context"
 	"errors"
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/container"
 	docker "github.com/docker/docker/client"
 	"io"
-	"os"
 	"strings"
 )
 
@@ -204,11 +201,11 @@ func (d *dockerClient) StopContainer(containerID string) error {
 	return nil
 }
 
-func (d *dockerClient) CreateContainerFromDockerfile(dockerfile string) error {
-	buf := new(bytes.Buffer)
-	tw := tar.NewWriter(buf)
-	defer tw.Close()
-
-	dockerFileReader, err := os.Open(dockerfile)
-
-}
+//func (d *dockerClient) CreateContainerFromDockerfile(dockerfile string) error {
+//	buf := new(bytes.Buffer)
+//	tw := tar.NewWriter(buf)
+//	defer tw.Close()
+//
+//	_, _ = os.Open(dockerfile)
+//
+//}
