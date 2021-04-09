@@ -15,12 +15,12 @@ import routes from '../constants/routes.json';
 import { Link } from 'react-router-dom';
 import { getCurrentPathname } from '../store/store';
 import { useSelector } from 'react-redux';
-import {
-  checkApiStatus,
-  checkDockerStatus,
-  getApiStatus,
-  getDockerStatus,
-} from '../features/home/HomeSlice';
+// import {
+//   checkApiStatus,
+//   checkDockerStatus,
+//   getApiStatus,
+//   getDockerStatus,
+// } from '../features/home/HomeSlice';
 
 interface INavigationItemProps {
   route: string;
@@ -53,16 +53,16 @@ interface NavigationBarProps {
 }
 
 function Navigation(props: NavigationBarProps): ReactElement {
-  useEffect(() => {
-    checkApiStatus();
-    checkDockerStatus();
-  });
+  // useEffect(() => {
+  //   checkApiStatus();
+  //   checkDockerStatus();
+  // });
 
   const { isLoading } = props;
   const elementIsLoading = isLoading ? Classes.SKELETON : '';
   const currentPage = useSelector(getCurrentPathname);
-  const dockerStatus = useSelector(getDockerStatus);
-  const apiStatus = useSelector(getApiStatus);
+  // const dockerStatus = useSelector(getDockerStatus);
+  // const apiStatus = useSelector(getApiStatus);
 
   const leftMenuRoutes = [
     routes.HOME,

@@ -1,22 +1,9 @@
-import {
-  Card,
-  Elevation,
-  IconName,
-  Intent,
-  Label,
-  NonIdealState,
-  Tag,
-} from '@blueprintjs/core';
+import { IconName, NonIdealState } from '@blueprintjs/core';
 import React, { ReactElement } from 'react';
-import { useSelector } from 'react-redux';
+import AxiosClient from '../../api/Client';
 import HomeCard from '../../components/HomeCard';
-import {
-  checkApiStatus,
-  checkDockerStatus,
-  getApiStatus,
-  getDockerStatus,
-  Status,
-} from './HomeSlice';
+
+import { Status } from '../../api/Status';
 
 type NoContainersFoundProps = {
   icon: IconName;
@@ -31,47 +18,47 @@ function NoContainersFound(props: NoContainersFoundProps): ReactElement {
   );
 }
 
-export const message = (status: Status): string => {
-  switch (status) {
-    case Status.ON:
-      return 'Ready';
-    case Status.DEGRADED:
-      return 'Degraded';
-    case Status.OFF:
-      return 'Off';
-  }
-};
+function HomeContainer() {
+  const [responseData, setResponseData] = React.useState<Status | null>(null);
+  const [panelErrored, setPanelErrored] = React.useState(false);
 
-const description = (
-  <>
-    You currently have no containers running.
-    <br />
-    Try creating a container in the <em>Create Container</em> tab.
-  </>
-);
+  // Fetch data from the server. If error occurs then render the error message.
+  const fetchInfo = React.useCallback(() => {
+    AxiosClient.get('status')
+      .then((response) => {
+        setResponseData(response.data);
+      })
+      .catch((error) => {
+        setPanelErrored(true);
+      });
+  }, []);
 
-class HomeContainer extends React.Component {
-  componentDidMount() {
-    checkDockerStatus();
-    checkApiStatus();
-  }
+  React.useEffect(() => {
+    fetchInfo();
+  }, [fetchInfo]);
 
-  render() {
-    return (
-      <div style={{ padding: '1rem' }}>
-        <h1>Dashboard</h1>
-        <HomeCard
-          id={'1234'}
-          name={'local'}
-          containerCount={12}
-          imageCount={15}
-          dockerRootDirectory={'/var/sock/docker'}
-          cpuCount={4}
-          memoryCount={21348984}
-        />
-      </div>
-    );
-  }
+  return panelErrored ? (
+    <NoContainersFound
+      description={<>Error in loading docker environment</>}
+      icon={'cross'}
+      message={'Please check your Docker environment settings'}
+    />
+  ) : (
+    <div style={{ padding: '1rem' }}>
+      <h1>Dashboard</h1>
+      <HomeCard
+        id={responseData?.id ?? '1234'}
+        name={responseData?.environmentName ?? 'fake local'}
+        containerCount={responseData?.containers ?? 0}
+        imageCount={responseData?.images ?? 0}
+        dockerRootDirectory={
+          responseData?.dockerRootDirectory ?? '/var/sock/docker'
+        }
+        cpuCount={responseData?.cpuCount ?? 4}
+        memoryCount={responseData?.memoryInUse ?? 21348984}
+      />
+    </div>
+  );
 }
 
 export default HomeContainer;

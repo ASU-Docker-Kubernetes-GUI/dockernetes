@@ -20,7 +20,7 @@ type dockerClient struct {
 }
 
 type DockerClient interface {
-	GetDockerStatus() (*types.Info, error)
+	GetDockerStatus() (*Status, error)
 	GetAllContainers() (*[]types.Container, error)
 	GetContainerById(ID string) (*types.Container, error)
 	CreateContainer(imageName, containerName string) error
@@ -31,13 +31,25 @@ type DockerClient interface {
 }
 
 // GetDockerStatus returns the current Docker server environment
-func (d *dockerClient) GetDockerStatus() (*types.Info, error) {
+func (d *dockerClient) GetDockerStatus() (*Status, error) {
 	resp, err := d.dockerClient.Info(*d.ctx)
+
 	if err != nil {
 		return nil, err
 	}
 
-	return &resp, nil
+	volumeCount := len(resp.Plugins.Volume)
+
+	return &Status{
+		ID:                  resp.ID,
+		EnvironmentName:     resp.Name,
+		Containers:          resp.Containers,
+		Volumes:             volumeCount,
+		Images:              resp.Images,
+		DockerRootDirectory: resp.DockerRootDir,
+		CpuCount:            resp.NCPU,
+		MemoryUsage:         resp.MemTotal,
+	}, nil
 }
 
 // NewDockerClient creates a new Docker Client with a provided context
@@ -209,3 +221,14 @@ func (d *dockerClient) StopContainer(containerID string) error {
 //	_, _ = os.Open(dockerfile)
 //
 //}
+
+type Status struct {
+	ID                  string `json:"id"`
+	EnvironmentName     string `json:"environmentName"`
+	Containers          int    `json:"containers"`
+	Volumes             int    `json:"volumes"`
+	Images              int    `json:"images"`
+	DockerRootDirectory string `json:"dockerRootDirectory"`
+	CpuCount            int    `json:"cpuCount"`
+	MemoryUsage         int64  `json:"memoryInUse"`
+}

@@ -22,3 +22,16 @@ export function handleValueChange<T>(handler: (value: T) => void) {
 export function handleNumberChange(handler: (value: number) => void) {
   return handleStringChange((value) => handler(+value));
 }
+
+export const transformObj = (obj: any) => {
+  return Object.keys(obj).reduce((acc: any, key) => {
+    if (key.indexOf('.') >= 0) {
+      const [parentKey, childKey] = key.split('.');
+      acc[parentKey] = acc[parentKey] || {};
+      acc[parentKey][childKey] = obj[key];
+    } else {
+      acc[key] = obj[key];
+    }
+    return acc;
+  }, {});
+};
