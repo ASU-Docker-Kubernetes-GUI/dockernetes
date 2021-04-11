@@ -2,32 +2,207 @@ package client
 
 import (
 	"context"
-	"errors"
+	"fmt"
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/container"
 	docker "github.com/docker/docker/client"
 	"io"
+	"log"
+	"sort"
 	"strings"
 )
 
+// Typedef integer for the state of a Docker container
+type State int
+
+// The states that a container can have
+const (
+	Created State = iota
+	Restarting
+	Running
+	Paused
+	Exited
+	Killed
+	Dead
+)
+
+// Status is a struct for returning back the status our docker containers
+type Status struct {
+	ID                  string `json:"id"`
+	EnvironmentName     string `json:"environmentName"`
+	Containers          int    `json:"containers"`
+	Volumes             int    `json:"volumes"`
+	Images              int    `json:"images"`
+	DockerRootDirectory string `json:"dockerRootDirectory"`
+	CpuCount            int    `json:"cpuCount"`
+	MemoryUsage         int64  `json:"memoryInUse"`
+}
+
+// Container is the container struct that holds all of the information that we actually care
+// about from Docker.
+type Container struct {
+	ContainerID    string       `json:"id""`
+	ContainerNames []string     `json:"containerName"`
+	ImageName      string       `json:"imageName"`
+	Ports          []types.Port `json:"ports"`
+	Path           string       `json:"path"`
+	Created        int64        `json:"created"`
+	Finished       string       `json:"finished,omitempty"`
+	Status         string       `json:"status"`
+	State          State        `json:"state"`
+}
+
+// Image is the Image struct that holds all of the information that we actually care about from docker
+type Image struct {
+	ImageId      string   `json:"id"`
+	RepoTags     []string `json:"tags"`
+	Created      int64    `json:"created"`
+	Size         int64    `json:"size"`
+	Containers   int64    `json:"containers"`
+	Author       string   `json:"author"`
+	Architecture string   `json:"architecture"`
+	OS           string   `json:"OS"`
+}
+
+// ImageSearch is the ImageSearch struct that holds all of the return values from the Image Search
+// function that we actually care about
+type ImageSearch struct {
+	Name        string `json:"name"`
+	IsOfficial  bool   `json:"isOfficial"`
+	StarCount   int    `json:"starCount"`
+	Description string `json:"description"`
+}
+
 type dockerClient struct {
-	ctx          *context.Context
-	dockerClient *docker.Client
-	// containerCache is a map of containerIDs to Containers
-	containerCache map[string]types.Container
-	// imageCache is a map of images to booleans. True if image is fresh
-	imageCache map[string]bool
+	ctx            *context.Context
+	dockerClient   *docker.Client
+	containerCache map[string]Container // containerCache is a map of containerIDs to Containers
+	imageCache     map[string]Image     // imageCache is a map of images to booleans. True if image is fresh
 }
 
 type DockerClient interface {
 	GetDockerStatus() (*Status, error)
-	GetAllContainers() (*[]types.Container, error)
-	GetContainerById(ID string) (*types.Container, error)
-	CreateContainer(imageName, containerName string) error
-	GetContainerLogs(containerID string) (*io.ReadCloser, error)
+	GetAllContainers() (*[]Container, error)
+	GetContainerById(ID string) (*Container, error)
+	CreateContainer(imageName, containerName string) (*string, error)
 	StopContainer(containerID string) error
 	StopAllContainers() ([]string, error)
 	RestartContainer(containerID string) error
+	GetAllImages() (*[]Image, error)
+	GetImageById(imageID string) (*Image, error)
+	RemoveDockerImage(imageID string, force bool) (*string, error)
+	SearchImage(name string) (*[]ImageSearch, error)
+}
+
+func (d *dockerClient) SearchImage(name string) (*[]ImageSearch, error) {
+	resp, err := d.dockerClient.ImageSearch(*d.ctx, name, types.ImageSearchOptions{Limit: 10})
+
+	if err != nil {
+		return nil, err
+	}
+
+	foundImages := []ImageSearch{}
+	for _, result := range resp {
+		foundImages = append(foundImages, ImageSearch{
+			Name:        result.Name,
+			IsOfficial:  result.IsOfficial,
+			StarCount:   result.StarCount,
+			Description: result.Description,
+		})
+	}
+
+	// Sort the images by most stars to least stars
+	sort.Slice(foundImages[:], func(i, j int) bool {
+		return foundImages[i].StarCount < foundImages[j].StarCount
+	})
+
+	return &foundImages, nil
+}
+
+func (d *dockerClient) RemoveDockerImage(imageID string, force bool) (*string, error) {
+	resp, err := d.dockerClient.ImageRemove(*d.ctx, imageID, types.ImageRemoveOptions{
+		Force: force,
+	})
+
+	if err != nil {
+		return nil, err
+	}
+
+	deletedImageId := ""
+
+	if len(resp) > 0 {
+		deletedImageId = resp[0].Deleted
+	}
+
+	return &deletedImageId, nil
+}
+
+func (d *dockerClient) GetImageById(imageID string) (*Image, error) {
+	resp, err := d.dockerClient.ImageList(*d.ctx, types.ImageListOptions{})
+
+	if err != nil {
+		return nil, err
+	}
+
+	var found Image
+	for _, r := range resp {
+		if r.ID == imageID {
+
+			re, _, e := d.dockerClient.ImageInspectWithRaw(*d.ctx, imageID)
+			var author string
+			var architecture string
+			var os string
+
+			if e != nil {
+				author = ""
+				architecture = ""
+				os = ""
+			} else {
+				author = re.Author
+				architecture = re.Architecture
+				os = re.Os
+			}
+
+			found = Image{
+				ImageId:      r.ID,
+				RepoTags:     r.RepoTags,
+				Created:      r.Created,
+				Size:         r.Size,
+				Containers:   r.Containers,
+				Author:       author,
+				Architecture: architecture,
+				OS:           os,
+			}
+		}
+	}
+
+	return &found, nil
+}
+
+func (d *dockerClient) GetAllImages() (*[]Image, error) {
+	images := []Image{}
+
+	resp, err := d.dockerClient.ImageList(*d.ctx, types.ImageListOptions{})
+
+	if err != nil {
+		return nil, err
+	}
+
+	for _, image := range resp {
+		r, _, _ := d.dockerClient.ImageInspectWithRaw(*d.ctx, image.ID)
+		images = append(images, Image{
+			ImageId:      image.ID,
+			RepoTags:     image.RepoTags,
+			Created:      image.Created,
+			Size:         image.Size,
+			Containers:   image.Containers,
+			Author:       r.Author,
+			Architecture: r.Architecture,
+			OS:           r.Os,
+		})
+	}
+
+	return &images, nil
 }
 
 // GetDockerStatus returns the current Docker server environment
@@ -59,75 +234,83 @@ func NewDockerClient(ctx *context.Context) *dockerClient {
 		panic(err)
 	}
 
-	c := make(map[string]types.Container)
-	i := make(map[string]bool)
+	c := make(map[string]Container)
+	i := make(map[string]Image)
 
 	return &dockerClient{ctx: ctx, dockerClient: client, containerCache: c, imageCache: i}
 }
 
 // GetAllContainers
-func (d *dockerClient) GetAllContainers() (*[]types.Container, error) {
+func (d *dockerClient) GetAllContainers() (*[]Container, error) {
 	response, err := d.dockerClient.ContainerList(*d.ctx, types.ContainerListOptions{All: true})
+
 	if err != nil {
 		return nil, err
 	}
 
-	// Store the containers in the cache. This way when we call `GetContainerById` we can
-	// immediately return the result
-	for _, container := range response {
-		if con, ok := d.containerCache[container.ID]; !ok {
-			d.containerCache[container.ID] = container
+	containerList := d.extractContainerData(response)
+
+	// Update all containers
+	for _, container := range containerList {
+		if _, exists := d.containerCache[container.ContainerID]; !exists {
+			d.containerCache[container.ContainerID] = container
 		} else {
-			d.containerCache[container.ID] = con
+			d.containerCache[container.ContainerID] = container
 		}
 	}
-
-	return &response, nil
+	return &containerList, nil
 }
 
 // GetContainerById
-func (d *dockerClient) GetContainerById(ID string) (*types.Container, error) {
-	// Immediately check if the container exists in the cache, if so then add it in
+func (d *dockerClient) GetContainerById(ID string) (*Container, error) {
+	// Immediately check if the parsedContainer exists in the cache, if so then add it in
 	if container, ok := d.containerCache[ID]; ok {
 		return &container, nil
 	}
 
-	response, err := d.dockerClient.ContainerList(*d.ctx, types.ContainerListOptions{})
+	// Get all containers
+	containers, err := d.dockerClient.ContainerList(*d.ctx, types.ContainerListOptions{})
+
 	if err != nil {
 		return nil, err
 	}
 
-	for _, container := range response {
-		if c, ok := d.containerCache[container.ID]; !ok {
-			d.containerCache[container.ID] = container
+	parsedContainers := d.extractContainerData(containers)
+
+	for _, parsedContainer := range parsedContainers {
+		if _, exists := d.containerCache[parsedContainer.ContainerID]; !exists {
+			d.containerCache[parsedContainer.ContainerID] = parsedContainer
 		} else {
-			d.containerCache[c.ID] = c
+			d.containerCache[parsedContainer.ContainerID] = parsedContainer
 		}
 	}
 
-	container := d.containerCache[ID]
-	return &container, nil
+	foundContainer, ok := d.containerCache[ID]
+
+	if !ok {
+		return nil, fmt.Errorf("the parsedContainer does not exist")
+	}
+
+	return &foundContainer, nil
 }
 
-// CreateContainer
-func (d *dockerClient) CreateContainer(imageName, containerName string) error {
-	if _, ok := d.imageCache[imageName]; !ok {
-		img, err := d.dockerClient.ImagePull(*d.ctx, imageName, types.ImagePullOptions{})
-		if err != nil {
-			return err
-		}
+// CreateContainer creates the container but does not start it
+func (d *dockerClient) CreateContainer(imageName, containerName string) (*string, error) {
+	img, err := d.dockerClient.ImagePull(*d.ctx, imageName, types.ImagePullOptions{})
 
-		buf := new(strings.Builder)
-		_, err = io.Copy(buf, img)
-		if err != nil {
-			return err
-		}
+	if err != nil {
+		return nil, err
+	}
 
-		// Add the image to our image cache so we don't have to build it again
-		d.imageCache[imageName] = true
+	buf := new(strings.Builder)
+	_, err = io.Copy(buf, img)
+
+	if err != nil {
+		return nil, err
 	}
 
 	cName := ""
+
 	if containerName != "" {
 		cName = containerName
 	}
@@ -137,34 +320,10 @@ func (d *dockerClient) CreateContainer(imageName, containerName string) error {
 	}, nil, nil, nil, cName)
 
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	if err := d.dockerClient.ContainerStart(*d.ctx, resp.ID, types.ContainerStartOptions{}); err != nil {
-		return err
-	}
-
-	// Store the ID in the containerCache
-	if _, ok := d.containerCache[resp.ID]; !ok {
-		d.containerCache[resp.ID] = types.Container{ID: resp.ID}
-	}
-
-	return nil
-}
-
-// GetContainerLogs
-func (d *dockerClient) GetContainerLogs(containerID string) (*io.ReadCloser, error) {
-	if container, ok := d.containerCache[containerID]; !ok {
-		return nil, errors.New("container does not exist in containerCache")
-	} else {
-		logs, err := d.dockerClient.ContainerLogs(*d.ctx, container.ID, types.ContainerLogsOptions{ShowStdout: true})
-
-		if err != nil {
-			return nil, err
-		}
-
-		return &logs, nil
-	}
+	return &resp.ID, nil
 }
 
 // StopAllContainers stops all containers that are currently running
@@ -177,14 +336,19 @@ func (d *dockerClient) StopAllContainers() ([]string, error) {
 	}
 
 	for _, container := range d.containerCache {
+		// skip non-running containers to avoid problems
+		if container.Status != "running" {
+			continue
+		}
+
 		// Stop the container
-		if err := d.dockerClient.ContainerStop(*d.ctx, container.ID, nil); err != nil {
-			erroredContainerIDs = append(erroredContainerIDs, container.ID)
+		if err := d.dockerClient.ContainerStop(*d.ctx, container.ContainerID, nil); err != nil {
+			erroredContainerIDs = append(erroredContainerIDs, container.ContainerID)
 		}
 
 		// Remove these fields from the container cache
-		if _, ok := d.containerCache[container.ID]; ok {
-			delete(d.containerCache, container.ID)
+		if _, ok := d.containerCache[container.ContainerID]; ok {
+			delete(d.containerCache, container.ContainerID)
 		}
 	}
 
@@ -200,6 +364,7 @@ func (d *dockerClient) RestartContainer(containerID string) error {
 	return nil
 }
 
+// StopContainer stops the container
 func (d *dockerClient) StopContainer(containerID string) error {
 	if err := d.dockerClient.ContainerStop(*d.ctx, containerID, nil); err != nil {
 		return err
@@ -213,22 +378,65 @@ func (d *dockerClient) StopContainer(containerID string) error {
 	return nil
 }
 
-//func (d *dockerClient) CreateContainerFromDockerfile(dockerfile string) error {
-//	buf := new(bytes.Buffer)
-//	tw := tar.NewWriter(buf)
-//	defer tw.Close()
-//
-//	_, _ = os.Open(dockerfile)
-//
-//}
+// GetDiskUsage Gets the disk usage for the Docker environment
+func (d *dockerClient) GetDiskUsage() (*types.DiskUsage, error) {
+	resp, err := d.dockerClient.DiskUsage(*d.ctx)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
 
-type Status struct {
-	ID                  string `json:"id"`
-	EnvironmentName     string `json:"environmentName"`
-	Containers          int    `json:"containers"`
-	Volumes             int    `json:"volumes"`
-	Images              int    `json:"images"`
-	DockerRootDirectory string `json:"dockerRootDirectory"`
-	CpuCount            int    `json:"cpuCount"`
-	MemoryUsage         int64  `json:"memoryInUse"`
+// extractContainerData
+func (d *dockerClient) extractContainerData(response []types.Container) []Container {
+	containerList := []Container{}
+
+	for _, k := range response {
+		// Call Inspect Container for detailed stats
+		resp, err := d.dockerClient.ContainerInspect(*d.ctx, k.ID)
+		if err != nil {
+			log.Print("Unable to inspect this container")
+		}
+
+		containerList = append(containerList, Container{
+			ContainerID:    k.ID,
+			ContainerNames: k.Names,
+			ImageName:      k.Image,
+			Ports:          k.Ports,
+			Created:        k.Created,
+			Status:         k.Status,
+			State:          convertStateToEnum(resp.State),
+			Finished:       resp.State.FinishedAt,
+		})
+	}
+
+	return containerList
+}
+
+// convertStateToEnum
+func convertStateToEnum(a *types.ContainerState) State {
+	if a.Dead {
+		return Dead
+	}
+	if a.Running {
+		return Running
+	}
+
+	if a.Paused {
+		return Paused
+	}
+
+	if a.OOMKilled {
+		return Killed
+	}
+
+	if a.Restarting {
+		return Restarting
+	}
+
+	if a.ExitCode > 0 {
+		return Exited
+	}
+
+	return Created
 }

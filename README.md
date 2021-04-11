@@ -1,7 +1,7 @@
 # Docker Management System (DMS)
 
 The docker management system (affectionately called _Dockernetes_, no relation 
-to Lyft's Dockernetes), is a container management system devoted to making
+to Lyft's Dockernetes), is a parsedContainer management system devoted to making
 Docker deployments as easy and as painless as possible. 
 
 This project is open source, and free. It is also open to contributions. 

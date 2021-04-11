@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/websocket/v2"
 	client "github.com/ivanmartinezmorales/dockernetes/server/docker_client"
 	"time"
 )
@@ -48,26 +47,24 @@ func HandleCreateContainer(ctx *fiber.Ctx) error {
 	// get the image name that we want to implement
 	imageName := ctx.Params("imageName")
 	if containerName := ctx.Params("containerName"); containerName != "" {
-		err := dockerClient.CreateContainer(imageName, containerName)
+		resp, err := dockerClient.CreateContainer(imageName, containerName)
+
+		newContainerID := resp
 
 		if err != nil {
 			return ctx.JSON(err)
 		}
 
-		return ctx.JSON("Created container successfully")
+		return ctx.JSON(map[string]string{"id": *newContainerID})
 	}
 
-	err := dockerClient.CreateContainer(imageName, "")
+	resp, err := dockerClient.CreateContainer(imageName, "")
 
 	if err != nil {
 		return ctx.JSON(err)
 	}
-	return ctx.JSON("created container successfully")
-}
 
-// HandlerGetContainerLogs not sure what needs to happen here, but it's just killing me tbh
-func HandleGetContainerLogs(c *websocket.Conn) error {
-	return nil
+	return ctx.JSON(map[string]string{"id": *resp})
 }
 
 func HandleStopContainer(ctx *fiber.Ctx) error {
@@ -115,4 +112,46 @@ func HandleRestartContainer(ctx *fiber.Ctx) error {
 	}
 
 	return ctx.SendString(fmt.Sprintf("Successfully restarted container with ID: %s", containerID))
+}
+
+func HandleGetDiskUsage(ctx *fiber.Ctx) error {
+	resp, err := dockerClient.GetDiskUsage()
+	if err != nil {
+		return ctx.SendString(fmt.Sprintf("Failed to get disk usage for environment"))
+	}
+
+	return ctx.JSON(resp)
+}
+
+// TODO
+func HandleGetEvents(ctx *fiber.Ctx) error {
+	return ctx.SendString("Not implemented")
+}
+
+func HandleGetAllHostImages(ctx *fiber.Ctx) error {
+	return ctx.SendString("Not implemented")
+}
+
+func HandleGetImageByName(ctx *fiber.Ctx) error {
+	return ctx.SendString("Not implemented")
+}
+
+func HandleCreateNetwork(ctx *fiber.Ctx) error {
+	return ctx.SendString("Not implemented")
+}
+
+func HandleConnectNetwork(ctx *fiber.Ctx) error {
+	return ctx.SendString("Not implemented")
+}
+
+func HandleRemoveNetwork(ctx *fiber.Ctx) error {
+	return ctx.SendString("Not implemented")
+}
+
+func HandleGetAllNetworks(ctx *fiber.Ctx) error {
+	return ctx.SendString("Not implemented")
+}
+
+func HandleRemoveImage(ctx *fiber.Ctx) error {
+	return ctx.SendString("Not implemented")
 }
