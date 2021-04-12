@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/websocket/v2"
 	client "github.com/ivanmartinezmorales/dockernetes/server/docker_client"
+	"strings"
 	"time"
 )
 
@@ -21,53 +21,56 @@ func HandlePing(ctx *fiber.Ctx) error {
 // HandleGetStatus returns the current status of the docker container
 func HandleGetStatus(ctx *fiber.Ctx) error {
 	resp, err := dockerClient.GetDockerStatus()
+
 	if err != nil {
 		return ctx.JSON(" ")
 	}
+
 	return ctx.JSON(resp)
 }
 
 func HandleGetAllContainers(ctx *fiber.Ctx) error {
 	resp, err := dockerClient.GetAllContainers()
+
 	if err != nil {
-		return ctx.JSON(err)
+		return ctx.Status(500).SendString("Unable to get all containers from Docker client")
 	}
+
 	return ctx.JSON(resp)
 
 }
 
 func HandleGetAllContainersByID(ctx *fiber.Ctx) error {
-	resp, err := dockerClient.GetContainerById(ctx.Params("id"))
-	if err != nil {
-		ctx.JSON(err)
+	requestedContainerID := ctx.Params("id", "")
+
+	if requestedContainerID == "" {
+		ctx.Status(400).SendString("Requested Container ID cannot be blank")
 	}
+
+	resp, err := dockerClient.GetContainerByID(requestedContainerID)
+
+	if err != nil {
+		ctx.Status(500).SendString(fmt.Sprintf("Unable to get %s from Docker client", requestedContainerID))
+	}
+
 	return ctx.JSON(resp)
 }
 
 func HandleCreateContainer(ctx *fiber.Ctx) error {
-	// get the image name that we want to implement
-	imageName := ctx.Params("imageName")
-	if containerName := ctx.Params("containerName"); containerName != "" {
-		err := dockerClient.CreateContainer(imageName, containerName)
+	imageName := ctx.Params("imageName", "")
+	newContainerName := ctx.Params("containerName", "")
 
-		if err != nil {
-			return ctx.JSON(err)
-		}
-
-		return ctx.JSON("Created container successfully")
+	if imageName == "" {
+		return ctx.Status(400).SendString("Image name cannot be blank!")
 	}
 
-	err := dockerClient.CreateContainer(imageName, "")
+	resp, err := dockerClient.CreateContainer(imageName, newContainerName)
 
 	if err != nil {
-		return ctx.JSON(err)
+		return ctx.Status(500).SendString("Unable to create the container at this time.")
 	}
-	return ctx.JSON("created container successfully")
-}
 
-// HandlerGetContainerLogs not sure what needs to happen here, but it's just killing me tbh
-func HandleGetContainerLogs(c *websocket.Conn) error {
-	return nil
+	return ctx.SendString(*resp)
 }
 
 func HandleStopContainer(ctx *fiber.Ctx) error {
@@ -115,4 +118,90 @@ func HandleRestartContainer(ctx *fiber.Ctx) error {
 	}
 
 	return ctx.SendString(fmt.Sprintf("Successfully restarted container with ID: %s", containerID))
+}
+
+func HandleGetDiskUsage(ctx *fiber.Ctx) error {
+	resp, err := dockerClient.GetDiskUsage()
+	if err != nil {
+		return ctx.SendString(fmt.Sprintf("Failed to get disk usage for environment"))
+	}
+
+	return ctx.JSON(resp)
+}
+
+func HandleGetAllHostImages(ctx *fiber.Ctx) error {
+	resp, err := dockerClient.GetAllImages()
+
+	if err != nil {
+		return ctx.Status(500).SendString("Unable to retrieve all images")
+	}
+
+	return ctx.JSON(resp)
+}
+
+func HandleRemoveImage(ctx *fiber.Ctx) error {
+	imageRemoveID := ctx.Params("id", "")
+
+	if imageRemoveID == "" {
+		return ctx.Status(404).SendString("Image to remove not found")
+	}
+
+	var forced bool
+
+	isForced := ctx.Query("force", "false")
+
+	if strings.ToLower(isForced) == "true" {
+		forced = true
+	} else {
+		forced = false
+	}
+
+	resp, err := dockerClient.RemoveDockerImage(ctx.Params("id"), forced)
+
+	if err != nil {
+		return ctx.Status(500).SendString("There was an issue removing the Docker image")
+	}
+
+	return ctx.JSON(resp)
+}
+
+func HandleSearchImageByName(ctx *fiber.Ctx) error {
+	imageName := ctx.Params("name")
+
+	if imageName == "" {
+		return ctx.Status(400).SendString("No image given to remove")
+	}
+
+	resp, err := dockerClient.SearchImage(imageName)
+
+	if err != nil {
+		return ctx.Status(500).SendString("Unable to retrieve images")
+	}
+
+	return ctx.JSON(resp)
+}
+
+// TODO
+func HandleGetEvents(ctx *fiber.Ctx) error {
+	return ctx.SendString("Not implemented")
+}
+
+// TODO
+func HandleCreateNetwork(ctx *fiber.Ctx) error {
+	return ctx.SendString("Not implemented")
+}
+
+// TODO
+func HandleConnectNetwork(ctx *fiber.Ctx) error {
+	return ctx.SendString("Not implemented")
+}
+
+// TODO
+func HandleRemoveNetwork(ctx *fiber.Ctx) error {
+	return ctx.SendString("Not implemented")
+}
+
+// TODO
+func HandleGetAllNetworks(ctx *fiber.Ctx) error {
+	return ctx.SendString("Not implemented")
 }
