@@ -83,13 +83,13 @@ type dockerClient struct {
 type DockerClient interface {
 	GetDockerStatus() (*Status, error)
 	GetAllContainers() (*[]Container, error)
-	GetContainerById(ID string) (*Container, error)
+	GetContainerByID(ID string) (*Container, error)
 	CreateContainer(imageName, containerName string) (*string, error)
 	StopContainer(containerID string) error
 	StopAllContainers() ([]string, error)
 	RestartContainer(containerID string) error
 	GetAllImages() (*[]Image, error)
-	GetImageById(imageID string) (*Image, error)
+	GetImageByID(imageID string) (*Image, error)
 	RemoveDockerImage(imageID string, force bool) (*string, error)
 	SearchImage(name string) (*[]ImageSearch, error)
 }
@@ -137,7 +137,7 @@ func (d *dockerClient) RemoveDockerImage(imageID string, force bool) (*string, e
 	return &deletedImageId, nil
 }
 
-func (d *dockerClient) GetImageById(imageID string) (*Image, error) {
+func (d *dockerClient) GetImageByID(imageID string) (*Image, error) {
 	resp, err := d.dockerClient.ImageList(*d.ctx, types.ImageListOptions{})
 
 	if err != nil {
@@ -262,7 +262,7 @@ func (d *dockerClient) GetAllContainers() (*[]Container, error) {
 }
 
 // GetContainerById
-func (d *dockerClient) GetContainerById(ID string) (*Container, error) {
+func (d *dockerClient) GetContainerByID(ID string) (*Container, error) {
 	// Immediately check if the parsedContainer exists in the cache, if so then add it in
 	if container, ok := d.containerCache[ID]; ok {
 		return &container, nil
