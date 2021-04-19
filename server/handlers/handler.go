@@ -215,3 +215,20 @@ func HandleRemoveNetwork(ctx *fiber.Ctx) error {
 func HandleGetAllNetworks(ctx *fiber.Ctx) error {
 	return ctx.SendString("Not implemented")
 }
+
+func HandleStartContainer(ctx *fiber.Ctx) error {
+
+	containerID := ctx.Params("id", "")
+
+	if containerID == "" {
+		ctx.Status(400).SendString("id must not be blank!")
+	}
+
+	resp, err := dockerClient.StartContainer(containerID)
+
+	if err != nil {
+		return ctx.Status(500).SendString("Unable to start container")
+	}
+
+	return ctx.SendString(*resp)
+}

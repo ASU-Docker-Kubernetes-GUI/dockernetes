@@ -5,8 +5,8 @@ import (
 	"github.com/ivanmartinezmorales/dockernetes/server/handlers"
 )
 
-// CreateDockerRoutes instantiates our Dockernetes Router
-func CreateDockerRoutes(app fiber.Router) {
+// CreateDockerRouter instantiates our Dockernetes Router
+func CreateDockerRouter(app fiber.Router) {
 	router := app.Group("/api/v1/docker")
 
 	// Back office Routes
@@ -21,6 +21,7 @@ func CreateDockerRoutes(app fiber.Router) {
 	router.Get("/containers/stop", handlers.HandleStopAllContainers)
 	router.Get("/containers/stop/:id", handlers.HandleStopContainer)
 	router.Put("/containers/restart/:id", handlers.HandleRestartContainer)
+	router.Put("/containers/start/:id", handlers.HandleStartContainer)
 	router.Post("/containers/create", handlers.HandleCreateContainer)
 
 	// Images Routes
@@ -34,4 +35,11 @@ func CreateDockerRoutes(app fiber.Router) {
 	router.Get("/networks/connect/:id", handlers.HandleConnectNetwork)
 	router.Delete("/networks/:id", handlers.HandleRemoveNetwork)
 
+}
+
+func CreateKubernetesRouter(app fiber.Router) {
+	router := app.Group("/api/v1/kubernetes")
+	router.Get("/ping", func(ctx *fiber.Ctx) error {
+		return ctx.SendString("Hello world")
+	})
 }

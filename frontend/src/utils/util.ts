@@ -35,3 +35,10 @@ export const transformObj = (obj: any) => {
     return acc;
   }, {});
 };
+
+/**
+ * Transforms those long pesky IDs into something that's actually readable
+ * @param s the ID to transform
+ */
+export const transformID = (s: string) =>
+  s.substring(s.length - 10, s.length - 1);

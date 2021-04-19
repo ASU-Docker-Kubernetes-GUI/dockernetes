@@ -1,5 +1,6 @@
 import { Card, Divider, Elevation, Intent, Tag } from '@blueprintjs/core';
 import React from 'react';
+import { transformID } from '../utils/util';
 import { ContainerButtons } from './ContainerButtons';
 
 interface ContainerStatusProps {
@@ -70,19 +71,15 @@ export function ContainerListItem(props: ContainerListItemProps) {
     ) : null;
 
   return (
-    <Card
-      id={containerId}
-      elevation={Elevation.THREE}
-      style={{ margin: '1em' }}
-    >
+    <Card id={containerId} elevation={Elevation.ONE} style={{ margin: '1em' }}>
       <div>
         <h2 className={'bp3-heading'}>
           {`${containerNames[0].replace('/', '')}`}
         </h2>
-        <p>{status}</p>
+        <Tag large>{status}</Tag>
         <Divider />
         <br />
-        <p className={'bp3-running-text'}>ID: {containerId}</p>
+        <p className={'bp3-running-text'}>ID: {transformID(containerId)}</p>
         <p className={'bp3-running-text'}>Image Name: {imageName}</p>
         <p className={'bp3-running-text'}>Created Time: {created}</p>
         <ContainerFinished />

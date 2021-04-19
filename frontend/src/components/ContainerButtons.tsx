@@ -37,7 +37,8 @@ export class ContainerButtons extends React.PureComponent<IContainerButtonProps>
     // Show the toast optimistically
     this.showToast('Starting container...', 'success');
     // Add logic to start creating the container here
-    // Then finally update and let the thing know that the conatiner ist started
+    // Then finally update and let the thing know that the container ist started
+
     setTimeout(
       () =>
         this.showToast(`Started container ${this.props.containerId}`, 'none'),

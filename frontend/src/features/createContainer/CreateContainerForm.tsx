@@ -1,15 +1,11 @@
-import {
-  Alert,
-  Button,
-  FormGroup,
-  InputGroup,
-  Toast,
-  Toaster,
-} from '@blueprintjs/core';
+import { Alert, Button, FormGroup, InputGroup } from '@blueprintjs/core';
 import React, { FormEvent, useState } from 'react';
 import AxiosClient from '../../api/Client';
 import { AppToaster } from '../../components/ContainerButtons';
 
+/**
+ * Form for creating a new Docker container.
+ */
 export function CreateContainerForm() {
   const [containerName, setContainerName] = React.useState<string>('');
   const [imageName, setImageName] = React.useState<string>('');
@@ -19,7 +15,6 @@ export function CreateContainerForm() {
   const [errorMessage, setErrorMessage] = React.useState<string>('');
 
   const handleFormSubmission = (event: React.MouseEvent<HTMLElement>) => {
-    console.log('clicked button');
     event.preventDefault();
 
     if (imageName == '') {
@@ -28,12 +23,20 @@ export function CreateContainerForm() {
       return;
     }
 
+    AppToaster.show({
+      message: `Creating container...`,
+      timeout: 1500,
+      intent: 'primary',
+    });
+
+    setImageName('');
+    setContainerName('');
+
     AxiosClient.post('containers/create', {
       imageName: imageName,
       containerName: containerName,
     })
       .then((response) => {
-        console.log('successful');
         setTimeout(
           () =>
             AppToaster.show({
@@ -48,27 +51,26 @@ export function CreateContainerForm() {
         );
       })
       .catch((e) => {
-        console.log(e);
         setErrorPaneEnabled(true);
-        setErrorMessage('Server error occured! Try again');
+        setErrorMessage('Server error occurred! Try again');
       });
-
-    setImageName('');
-    setContainerName('');
   };
 
-  return (
-    <>
-      <Alert
-        confirmButtonText={'OK'}
-        isOpen={errorPaneEnabled}
-        onClose={(evt) => {
-          setErrorPaneEnabled(false);
-        }}
-      >
-        <p>{errorMessage}</p>
-      </Alert>
+  const ErrorAlert = () => (
+    <Alert
+      confirmButtonText={'OK'}
+      isOpen={errorPaneEnabled}
+      onClose={(evt) => {
+        setErrorPaneEnabled(false);
+      }}
+    >
+      <p>{errorMessage}</p>
+    </Alert>
+  );
 
+  return (
+    <div>
+      <ErrorAlert />
       <h2>Create a Container</h2>
       <FormGroup
         label="Container Name"
@@ -94,9 +96,9 @@ export function CreateContainerForm() {
       </FormGroup>
       <FormGroup>
         <Button icon={'layers'} onClick={handleFormSubmission}>
-          Create this container
+          Create Container
         </Button>
       </FormGroup>
-    </>
+    </div>
   );
 }

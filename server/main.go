@@ -13,7 +13,8 @@ const (
 func main() {
 	app := fiber.New()
 
-	router.CreateDockerRoutes(app)
+	router.CreateDockerRouter(app)
+	router.CreateKubernetesRouter(app)
 
 	app.Get(
 		"/",
