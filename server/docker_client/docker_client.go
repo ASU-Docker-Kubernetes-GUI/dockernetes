@@ -36,6 +36,9 @@ type Status struct {
 	DockerRootDirectory string `json:"dockerRootDirectory"`
 	CpuCount            int    `json:"cpuCount"`
 	MemoryUsage         int64  `json:"memoryInUse"`
+	ContainersRunning   int    `json:"containersRunning"`
+	ContainersStopped   int    `json:"containersStopped"`
+	ContainersPaused    int    `json:"containersPaused"`
 }
 
 // Container is the container struct that holds all of the information that we actually care
@@ -50,6 +53,7 @@ type Container struct {
 	Finished       string       `json:"finished,omitempty"`
 	Status         string       `json:"status"`
 	State          State        `json:"state"`
+	RestartCount   int          `json:"restartCount,omitempty"'`
 }
 
 // Image is the Image struct that holds all of the information that we actually care about from docker
@@ -74,13 +78,15 @@ type ImageSearch struct {
 }
 
 type dockerClient struct {
-	ctx            *context.Context
-	dockerClient   *docker.Client
+	ctx          *context.Context
+	dockerClient *docker.Client // dockerClient is the official Docker Engine SDK client
+
 	containerCache map[string]Container // containerCache is a map of containerIDs to Containers
 	imageCache     map[string]Image     // imageCache is a map of images to booleans. True if image is fresh
 }
 
 type DockerClient interface {
+	Ping() (*string, error)
 	GetDockerStatus() (*Status, error)
 	GetAllContainers() (*[]Container, error)
 	GetContainerByID(ID string) (*Container, error)
@@ -92,6 +98,16 @@ type DockerClient interface {
 	GetImageByID(imageID string) (*Image, error)
 	RemoveDockerImage(imageID string, force bool) (*string, error)
 	SearchImage(name string) (*[]ImageSearch, error)
+}
+
+func (d *dockerClient) Ping() (*string, error) {
+	resp, err := d.dockerClient.Ping(*d.ctx)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &resp.APIVersion, nil
 }
 
 func (d *dockerClient) SearchImage(name string) (*[]ImageSearch, error) {
@@ -224,6 +240,9 @@ func (d *dockerClient) GetDockerStatus() (*Status, error) {
 		DockerRootDirectory: resp.DockerRootDir,
 		CpuCount:            resp.NCPU,
 		MemoryUsage:         resp.MemTotal,
+		ContainersRunning:   resp.ContainersRunning,
+		ContainersPaused:    resp.ContainersPaused,
+		ContainersStopped:   resp.ContainersStopped,
 	}, nil
 }
 
@@ -387,12 +406,11 @@ func (d *dockerClient) GetDiskUsage() (*types.DiskUsage, error) {
 	return &resp, nil
 }
 
-// extractContainerData
+// extractContainerData gets relevant container data and inspects containers to get even more data
 func (d *dockerClient) extractContainerData(response []types.Container) []Container {
 	containerList := []Container{}
 
 	for _, k := range response {
-		// Call Inspect Container for detailed stats
 		resp, err := d.dockerClient.ContainerInspect(*d.ctx, k.ID)
 		if err != nil {
 			log.Print("Unable to inspect this container")
@@ -407,6 +425,7 @@ func (d *dockerClient) extractContainerData(response []types.Container) []Contai
 			Status:         k.Status,
 			State:          convertStateToEnum(resp.State),
 			Finished:       resp.State.FinishedAt,
+			RestartCount:   resp.RestartCount,
 		})
 	}
 

@@ -3,29 +3,32 @@ package main
 import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/ivanmartinezmorales/dockernetes/server/router"
-	"time"
+	"log"
 )
 
 const (
-	port = "8080"
+	PORT = ":8080"
 )
 
 func main() {
 	app := fiber.New()
 
 	router.CreateDockerRoutes(app)
-	//app.Use("/ws", func(c *fiber.Ctx) error {
-	//	if websocket.IsWebSocketUpgrade(c) {
-	//		c.Locals("allowed", true)
-	//		return c.Next()
-	//	}
-	//	return fiber.ErrUpgradeRequired
-	//})
 
-	app.Get("/", func(ctx *fiber.Ctx) error {
-		ct := time.Now()
-		return ctx.JSON(map[string]string{"message": "app is up...", "currentTime": ct.String()})
+	app.Get(
+		"/",
+		func(ctx *fiber.Ctx) error {
+			return ctx.Send([]byte("Dockernetes Service API"))
+		},
+	)
+
+	app.Use(func(c *fiber.Ctx) error {
+		return c.SendStatus(404)
 	})
 
-	app.Listen(":8080")
+	err := app.Listen(PORT)
+
+	if err != nil {
+		log.Fatal(err.Error())
+	}
 }

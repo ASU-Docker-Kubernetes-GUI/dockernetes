@@ -56,9 +56,19 @@ func HandleGetAllContainersByID(ctx *fiber.Ctx) error {
 	return ctx.JSON(resp)
 }
 
+type CreateContainerRequest struct {
+	ImageName     string `json:"imageName" xml:"imageName" form:"imageName" query:"imageName"`
+	containerName string `json:"containerName" xml:"containerName" form:"containerName" query:"containerName"`
+}
+
 func HandleCreateContainer(ctx *fiber.Ctx) error {
-	imageName := ctx.Params("imageName", "")
-	newContainerName := ctx.Params("containerName", "")
+	request := new(CreateContainerRequest)
+	if err := ctx.BodyParser(request); err != nil {
+		ctx.Status(400).SendString("An error occurred")
+	}
+
+	imageName := request.ImageName
+	newContainerName := request.containerName
 
 	if imageName == "" {
 		return ctx.Status(400).SendString("Image name cannot be blank!")

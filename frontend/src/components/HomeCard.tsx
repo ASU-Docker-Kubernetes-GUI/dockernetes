@@ -26,14 +26,16 @@ export default function HomeCard(props: IHomeCardProps) {
       <div
         style={{
           display: 'flex',
-          justifyContent: 'space-between',
+          alignItems: 'center',
           margin: 'auto',
         }}
       >
-        <h2>{name}</h2>
-        <Tag intent={Intent.SUCCESS} round>
-          up
-        </Tag>
+        <h2>
+          {name}{' '}
+          <Tag intent={Intent.SUCCESS} round>
+            UP
+          </Tag>
+        </h2>{' '}
       </div>
       <div>
         <p>

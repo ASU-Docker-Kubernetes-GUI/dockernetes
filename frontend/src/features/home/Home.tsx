@@ -23,12 +23,12 @@ function HomeContainer() {
   const [panelErrored, setPanelErrored] = React.useState(false);
 
   // Fetch data from the server. If error occurs then render the error message.
-  const fetchInfo = React.useCallback(() => {
+  const fetchInfo: () => void = React.useCallback(() => {
     AxiosClient.get('status')
       .then((response) => {
         setResponseData(response.data);
       })
-      .catch((error) => {
+      .catch((_) => {
         setPanelErrored(true);
       });
   }, []);
@@ -39,16 +39,18 @@ function HomeContainer() {
 
   return panelErrored ? (
     <NoContainersFound
-      description={<>Error in loading docker environment</>}
+      description={
+        <p>Please check your Docker environment settings. Is Docker running?</p>
+      }
       icon={'cross'}
-      message={'Please check your Docker environment settings'}
+      message={'Unable to fetch Docker environment'}
     />
   ) : (
     <div style={{ padding: '1rem' }}>
       <h1>Dashboard</h1>
       <HomeCard
         id={responseData?.id ?? '1234'}
-        name={responseData?.environmentName ?? 'fake local'}
+        name={responseData?.environmentName ?? 'demo-environment'}
         containerCount={responseData?.containers ?? 0}
         imageCount={responseData?.images ?? 0}
         dockerRootDirectory={

@@ -1,8 +1,11 @@
-import { Card, Elevation, Tag, Intent, Divider } from '@blueprintjs/core';
-import React, { Component } from 'react';
+import { Card, Divider, Elevation, Intent, Tag } from '@blueprintjs/core';
+import React from 'react';
 import { ContainerButtons } from './ContainerButtons';
 
-type ContainerStatusProps = { status: string };
+interface ContainerStatusProps {
+  status: string;
+  state: number;
+}
 
 function ContainerStatus(props: ContainerStatusProps) {
   const { status } = props;
@@ -18,54 +21,83 @@ function ContainerStatus(props: ContainerStatusProps) {
 }
 
 export interface ContainerListItemProps {
-  id?: string;
-  name?: string; // the name of the container
-  status?: string; // The status will either be: running/stopped
-  image?: string; // the name of the image
-  created?: string; // when the image was created
-  host?: string; // who is hosting this container
-  publishedPorts?: string; // what ports are public
-  ownership?: string; // who owns this damn container
+  containerId: string;
+  containerNames: string[];
+  imageName: string;
+  ipAddress: string;
+  privatePort: number;
+  publicPort?: number;
+  type: string;
+  path: string;
+  created: string;
+  finished?: string;
+  status: string;
+  state: number;
+  restartCount: number;
+  isLoading: boolean;
 }
 
-class ContainerListItem extends Component<ContainerListItemProps, any> {
-  render() {
-    const {
-      id,
-      name,
-      status,
-      image,
-      created,
-      host,
-      publishedPorts,
-      ownership,
-    } = this.props;
+export function ContainerListItem(props: ContainerListItemProps) {
+  const {
+    containerId,
+    containerNames,
+    imageName,
+    ipAddress,
+    privatePort,
+    publicPort,
+    type,
+    path,
+    created,
+    finished,
+    status,
+    state,
+    restartCount,
+    isLoading,
+  } = props;
 
-    return (
-      <Card id={id} elevation={Elevation.THREE} style={{ margin: '1em' }}>
-        <div>
-          <h2 className={'bp3-heading'}>
-            {`${name}`}{' '}
-            <ContainerStatus
-              status={status === undefined ? 'running' : status}
-            />
-          </h2>
-          <Divider />
-          <br />
-          <p className={'bp3-running-text'}>ID: {id}</p>
-          <p className={'bp3-running-text'}>Image Name: {image}</p>
-          <p className={'bp3-running-text'}>Created Time: {created}</p>
-          <p className={'bp3-running-text'}>Host: {host}</p>
-          <p className={'bp3-running-text'}>
-            Published Ports: {publishedPorts}
-          </p>
-          <p className={'bp3-running-text'}>Ownership: {ownership}</p>
-        </div>
+  const ContainerFinished = () =>
+    finished != null ? (
+      <p className={`bp3-running-text ${isLoading ? 'bp3-skeleton' : ''}`}>
+        Container path: {path}
+      </p>
+    ) : null;
+
+  const ContainerDataItem = (info: string, isItemLoading: boolean) =>
+    info != null ? (
+      <p className={`bp3-running-text ${isItemLoading ? 'bp3-skeleton' : ''}`}>
+        {info}
+      </p>
+    ) : null;
+
+  return (
+    <Card
+      id={containerId}
+      elevation={Elevation.THREE}
+      style={{ margin: '1em' }}
+    >
+      <div>
+        <h2 className={'bp3-heading'}>
+          {`${containerNames[0].replace('/', '')}`}
+        </h2>
+        <p>{status}</p>
         <Divider />
-        <ContainerButtons containerId={'1234'} />
-      </Card>
-    );
-  }
+        <br />
+        <p className={'bp3-running-text'}>ID: {containerId}</p>
+        <p className={'bp3-running-text'}>Image Name: {imageName}</p>
+        <p className={'bp3-running-text'}>Created Time: {created}</p>
+        <ContainerFinished />
+        <p className={'bp3-running-text'}>IP Address: {ipAddress}</p>
+        <p className={'bp3-running-text'}>Private Port: {privatePort}</p>
+        <p className={'bp3-running-text'}>Public Port: {publicPort}</p>
+        <p className={'bp3-running-text'}>Port type: {type}</p>
+        <p className={'bp3-running-text'}>Container path: {path}</p>
+        <p className={'bp3-running-text'}>Container state: {state}</p>
+        <p className={'bp3-running-text'}>
+          Container restart count: {restartCount}
+        </p>
+      </div>
+      <Divider />
+      <ContainerButtons containerId={containerId} />
+    </Card>
+  );
 }
-
-export default ContainerListItem;
