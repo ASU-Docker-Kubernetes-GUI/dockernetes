@@ -1164,10 +1164,10 @@
   resolved "https://registry.yarnpkg.com/@bcoe/v8-coverage/-/v8-coverage-0.2.3.tgz#75a2e8b51cb758a7553d6804a5932d7aace75c39"
   integrity sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==
 
-"@blueprintjs/core@^3.38.1", "@blueprintjs/core@^3.42.0":
-  version "3.42.0"
-  resolved "https://registry.yarnpkg.com/@blueprintjs/core/-/core-3.42.0.tgz#a686f9f37b7467792995c04dc907862477bf7809"
-  integrity sha512-ln+4SNqVUnAGKy8r39l+3u/ycI9YEdPUT7bWUI4lFTyckX+eQzj4Jznqvy8UljXXzJwjCNABFs83OjG70QdAQw==
+"@blueprintjs/core@^3.38.1", "@blueprintjs/core@^3.42.0", "@blueprintjs/core@^3.44.0":
+  version "3.44.0"
+  resolved "https://registry.yarnpkg.com/@blueprintjs/core/-/core-3.44.0.tgz#3d03adb6a11d6c9fa8031414a7dba1a3003e70ee"
+  integrity sha512-QjRa4LvygTJn5v75O1bvKQtxcs9u2sl2CXoQ3Hd2KLQwzAz8kongWyc2xOw/wiFE4gRyRZQK44c43bEPkoeKhA==
   dependencies:
     "@blueprintjs/icons" "^3.26.0"
     "@types/dom4" "^2.0.1"
@@ -1181,12 +1181,12 @@
     resize-observer-polyfill "^1.5.1"
     tslib "~1.13.0"
 
-"@blueprintjs/datetime@^3.20.3":
-  version "3.22.0"
-  resolved "https://registry.yarnpkg.com/@blueprintjs/datetime/-/datetime-3.22.0.tgz#2fbeed9563bc5028845db81fe28b981d0b358529"
-  integrity sha512-jWE6S0doorYY4fpuXIv1CnqztM6Hh2AXnB7A2VAg4dyRbdeq81z1e2cxBN5vNKsqABWZIZekytSkQYj4VlkMAg==
+"@blueprintjs/datetime@^3.23.0":
+  version "3.23.0"
+  resolved "https://registry.yarnpkg.com/@blueprintjs/datetime/-/datetime-3.23.0.tgz#b295e474d5c8213395e00eedc95f725c906007ac"
+  integrity sha512-4WcJ1QwBGtemyTffYZOqpt1XOjX6sMcAW8tgTsVVM/isqKpjUuyiOoepOS4iwngpP6xRF1ZGMr+p/+FK73LJJA==
   dependencies:
-    "@blueprintjs/core" "^3.42.0"
+    "@blueprintjs/core" "^3.44.0"
     classnames "^2.2"
     react-day-picker "7.4.9"
     react-lifecycles-compat "^3.0.4"
