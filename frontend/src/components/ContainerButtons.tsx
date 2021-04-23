@@ -1,5 +1,7 @@
 import { Button, ButtonGroup, Intent, Toaster } from '@blueprintjs/core';
 import React from 'react';
+import AxiosClient from '../api/Client';
+import { transformID } from '../utils/util';
 
 export const AppToaster = Toaster.create({
   position: 'top-right',
@@ -13,22 +15,19 @@ export interface IContainerButtonProps {
 export class ContainerButtons extends React.PureComponent<IContainerButtonProps> {
   public render() {
     return (
-      <>
-        <div>
-          <h3>Container action buttons</h3>
-        </div>
-        <ButtonGroup large>
+      <div style={{ marginLeft: '0.5em' }}>
+        <ButtonGroup>
           {this.StartButton}
           {this.StopButton}
           {this.KillButton}
         </ButtonGroup>{' '}
-        <ButtonGroup large>
+        <ButtonGroup>
           {this.RestartButton}
           {this.ResumeButton}
           {this.DeleteButton}
         </ButtonGroup>
         <Toaster />
-      </>
+      </div>
     );
   }
 
@@ -38,10 +37,16 @@ export class ContainerButtons extends React.PureComponent<IContainerButtonProps>
     this.showToast('Starting container...', 'success');
     // Add logic to start creating the container here
     // Then finally update and let the thing know that the container ist started
+    AxiosClient.put(`containers/start/${this.props.containerId}`)
+      .then((r) => console.log(r.data))
+      .catch((e) => console.log('an error happened'));
 
     setTimeout(
       () =>
-        this.showToast(`Started container ${this.props.containerId}`, 'none'),
+        this.showToast(
+          `Started container ${transformID(this.props.containerId)}`,
+          'none',
+        ),
       3000,
     );
   }
@@ -49,11 +54,19 @@ export class ContainerButtons extends React.PureComponent<IContainerButtonProps>
   private handleStopContainer() {
     this.showToast('Stopping container...', 'warning', 1000);
 
+    AxiosClient.get(`containers/stop/${this.props.containerId}`)
+      .then((r) => console.log(r.data))
+      .catch((e) => console.log('an error happened'));
+
     setTimeout(() => this.showToast('Stopped container.', 'none'), 3000);
   }
 
   private handleKillContainer() {
     this.showToast('Killing container...', 'danger', 1000);
+
+    AxiosClient.get(`containers/stop/${this.props.containerId}`)
+      .then((r) => console.log(r.data))
+      .catch((e) => console.log('an error happened'));
     setTimeout(
       () =>
         this.showToast(`Killed container ${this.props.containerId}`, 'none'),
@@ -63,6 +76,11 @@ export class ContainerButtons extends React.PureComponent<IContainerButtonProps>
 
   private handleRestartContainer() {
     this.showToast('Restarting container...', 'warning', 1000);
+
+    AxiosClient.put(`containers/restart/${this.props.containerId}`)
+      .then((r) => console.log(r.data))
+      .catch((e) => console.log('an error happened'));
+
     setTimeout(
       () =>
         this.showToast(`Restarted container ${this.props.containerId}`, 'none'),
@@ -72,6 +90,11 @@ export class ContainerButtons extends React.PureComponent<IContainerButtonProps>
 
   private handleResumeContainer() {
     this.showToast('Resuming container...', 'warning', 1000);
+
+    AxiosClient.put(`containers/restart/${this.props.containerId}`)
+      .then((r) => console.log(r.data))
+      .catch((e) => console.log('an error happened'));
+
     setTimeout(
       () =>
         this.showToast(`Resumed container ${this.props.containerId}`, 'none'),

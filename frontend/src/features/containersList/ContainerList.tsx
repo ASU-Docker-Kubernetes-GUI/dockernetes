@@ -1,7 +1,16 @@
 import React from 'react';
 import AxiosClient from '../../api/Client';
 import { Container } from '../../api/Container';
-import { Card, Divider, Elevation, Intent, Tag } from '@blueprintjs/core';
+import {
+  Alignment,
+  Card,
+  Divider,
+  Elevation,
+  Intent,
+  Navbar,
+  NavbarGroup,
+  Tag,
+} from '@blueprintjs/core';
 import { ContainerButtons } from '../../components/ContainerButtons';
 import { transformID } from '../../utils/util';
 
@@ -65,12 +74,20 @@ function ContainerListItem(props: ContainerListItemProps) {
       </p>
     ) : null;
 
-  const ContainerDataItem = (info: string, isItemLoading: boolean) =>
-    info != null ? (
+  const ContainerDataItem = ({
+    info,
+    isItemLoading,
+  }: {
+    info: string;
+    isItemLoading: boolean;
+  }) =>
+    info != null || info != '' || info != 0 ? (
       <p className={`bp3-running-text ${isItemLoading ? 'bp3-skeleton' : ''}`}>
         {info}
       </p>
     ) : null;
+
+  const truncatedId = transformID(containerId);
 
   return (
     <Card id={containerId} elevation={Elevation.ONE} style={{ margin: '1em' }}>
@@ -91,23 +108,40 @@ function ContainerListItem(props: ContainerListItemProps) {
         </div>
         <Divider />
         <br />
-        <p className={'bp3-running-text'}>ID: {transformID(containerId)}</p>
-        <p className={'bp3-running-text'}>Image Name: {imageName}</p>
-        <p className={'bp3-running-text'}>Created Time: {created}</p>
+        <ContainerDataItem
+          info={`ID: ${truncatedId}`}
+          isItemLoading={isLoading}
+        />
+        <ContainerDataItem
+          info={`Image name: ${imageName}`}
+          isItemLoading={isLoading}
+        />
+        <ContainerDataItem
+          info={`Created time: ${created}`}
+          isItemLoading={isLoading}
+        />
         <ContainerFinished />
-        <p className={'bp3-running-text'}>IP Address: {ipAddress}</p>
-        <p className={'bp3-running-text'}>Private Port: {privatePort}</p>
-        <p className={'bp3-running-text'}>Public Port: {publicPort}</p>
+        <ContainerDataItem
+          info={`IP Address: ${ipAddress}`}
+          isItemLoading={isLoading}
+        />
+        <ContainerDataItem
+          info={`Public Port: ${publicPort}`}
+          isItemLoading={isLoading}
+        />
+        <ContainerDataItem
+          info={`Private port: ${privatePort}`}
+          isItemLoading={isLoading}
+        />
         <p className={'bp3-running-text'}>Port type: {type}</p>
         <p className={'bp3-running-text'}>Container path: {path}</p>
-        <p className={'bp3-running-text'}>Container state: {state}</p>
+        {/*<p className={'bp3-running-text'}>Container state: {state}</p>*/}
         {restartCount == null || restartCount == 0 ? null : (
           <p className={'bp3-running-text'}>
             Container restart count: {restartCount}
           </p>
         )}
       </div>
-      <Divider />
       <ContainerButtons containerId={containerId} />
     </Card>
   );
