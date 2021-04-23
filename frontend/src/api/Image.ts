@@ -1,6 +1,6 @@
 export interface Image {
-  imageId: string;
-  repoTags: string[];
+  id: string;
+  tags: string[];
   created: number;
   size: number;
   containers: number;

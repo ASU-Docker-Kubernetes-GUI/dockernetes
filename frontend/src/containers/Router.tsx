@@ -12,6 +12,8 @@ export default class ApplicationRouter extends React.PureComponent {
     () => import('./CreateContainer'),
   );
   LazyContainerListContainer = React.lazy(() => import('./ContainerListPage'));
+  LazyImageSearchContainer = React.lazy(() => import('./ImageSearchPage'));
+  LazyImageContainer = React.lazy(() => import('./ImagesPage'));
 
   HomePage = (props: Record<string, any>) => (
     <React.Suspense fallback={this.LazyLoadingScreen}>
@@ -31,6 +33,18 @@ export default class ApplicationRouter extends React.PureComponent {
     </React.Suspense>
   );
 
+  ImageSearchListPage = (props: Record<string, any>) => (
+    <React.Suspense fallback={this.LazyLoadingScreen}>
+      <this.LazyImageSearchContainer {...props} />
+    </React.Suspense>
+  );
+
+  ImagesListPage = (props: Record<string, any>) => (
+    <React.Suspense fallback={this.LazyLoadingScreen}>
+      <this.LazyImageContainer {...props} />
+    </React.Suspense>
+  );
+
   public render() {
     return (
       <App>
@@ -45,6 +59,11 @@ export default class ApplicationRouter extends React.PureComponent {
             path={route.CONTAINERS.path}
             component={this.ContainerListPage}
           />
+          <Route
+            path={route.SEARCH_IMAGES.path}
+            component={this.ImageSearchListPage}
+          />
+          <Route path={route.IMAGES.path} component={this.ImagesListPage} />
         </Switch>
       </App>
     );

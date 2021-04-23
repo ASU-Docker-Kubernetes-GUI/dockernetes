@@ -79,7 +79,7 @@ func (d *dockerClient) SearchImage(name string) (*[]ImageSearch, error) {
 
 	// Sort the images by most stars to least stars
 	sort.Slice(foundImages[:], func(i, j int) bool {
-		return foundImages[i].StarCount < foundImages[j].StarCount
+		return foundImages[i].StarCount > foundImages[j].StarCount
 	})
 
 	return &foundImages, nil
@@ -278,15 +278,9 @@ func (d *dockerClient) CreateContainer(imageName, containerName string) (*string
 		return nil, err
 	}
 
-	cName := ""
-
-	if containerName != "" {
-		cName = containerName
-	}
-
 	resp, err := d.dockerClient.ContainerCreate(*d.ctx, &container.Config{
 		Image: imageName,
-	}, nil, nil, nil, cName)
+	}, nil, nil, nil, containerName)
 
 	if err != nil {
 		return nil, err

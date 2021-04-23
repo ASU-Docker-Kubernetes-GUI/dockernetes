@@ -61,7 +61,7 @@ export default function HomeCard(props: IHomeCardProps) {
  * @param bytes the number of bytes to process
  * @param decimals the number of decimal points to round it out to
  */
-function formatBytes(bytes: number, decimals = 2) {
+export function formatBytes(bytes: number, decimals = 2) {
   if (bytes === 0) return '0 Bytes';
 
   const k = 1024;

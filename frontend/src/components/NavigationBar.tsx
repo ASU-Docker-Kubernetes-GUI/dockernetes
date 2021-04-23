@@ -53,36 +53,19 @@ interface NavigationBarProps {
 }
 
 function Navigation(props: NavigationBarProps): ReactElement {
-  // useEffect(() => {
-  //   checkApiStatus();
-  //   checkDockerStatus();
-  // });
-
   const { isLoading } = props;
   const elementIsLoading = isLoading ? Classes.SKELETON : '';
   const currentPage = useSelector(getCurrentPathname);
-  // const dockerStatus = useSelector(getDockerStatus);
-  // const apiStatus = useSelector(getApiStatus);
 
   const leftMenuRoutes = [
     routes.HOME,
     routes.CONTAINERS,
     routes.CREATE_CONTAINERS,
     routes.IMAGES,
+    routes.SEARCH_IMAGES,
   ];
 
   const LeftMenuItems = leftMenuRoutes.map((item, id) => (
-    <NavigationItem
-      key={id}
-      route={item.path}
-      name={item.title}
-      classNames={elementIsLoading}
-      currentLocation={currentPage}
-    />
-  ));
-
-  const rightMenuRoutes = [routes.SETTINGS];
-  const RightMenuItems = rightMenuRoutes.map((item, id) => (
     <NavigationItem
       key={id}
       route={item.path}
@@ -99,7 +82,6 @@ function Navigation(props: NavigationBarProps): ReactElement {
         <NavbarDivider />
         {LeftMenuItems}
       </NavbarGroup>
-      <NavbarGroup align={Alignment.RIGHT}>{RightMenuItems}</NavbarGroup>
     </Navbar>
   );
 }

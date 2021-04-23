@@ -26,8 +26,8 @@ func CreateDockerRouter(app fiber.Router) {
 
 	// Images Routes
 	router.Get("/images", handlers.HandleGetAllHostImages)
-	router.Get("/images/:searchTerm", handlers.HandleSearchImageByName)
-	router.Delete("/images/:id", handlers.HandleRemoveImage)
+	router.Get("/images/search", handlers.HandleSearchImageByName)
+	router.Delete("/images/delete/:id", handlers.HandleRemoveImage)
 
 	// Networks Routes
 	router.Get("/networks", handlers.HandleGetAllNetworks)

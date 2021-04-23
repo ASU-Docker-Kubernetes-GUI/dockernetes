@@ -58,7 +58,6 @@ func HandleGetAllContainersByID(ctx *fiber.Ctx) error {
 	return ctx.JSON(resp)
 }
 
-
 func HandleCreateContainer(ctx *fiber.Ctx) error {
 	request := new(CreateContainerRequest)
 	if err := ctx.BodyParser(request); err != nil {
@@ -174,10 +173,10 @@ func HandleRemoveImage(ctx *fiber.Ctx) error {
 }
 
 func HandleSearchImageByName(ctx *fiber.Ctx) error {
-	imageName := ctx.Params("name")
+	imageName := ctx.Query("searchTerm", "")
 
 	if imageName == "" {
-		return ctx.Status(400).SendString("No image given to remove")
+		return ctx.Status(400).SendString("No image found")
 	}
 
 	resp, err := dockerClient.SearchImage(imageName)

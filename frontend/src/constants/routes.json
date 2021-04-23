@@ -15,7 +15,11 @@
       "path": "/images",
       "title": "Images"
     },
-    "SETTINGS" : {
+  "SEARCH_IMAGES" : {
+    "path": "/image-search",
+    "title": "Image Lookup"
+  },
+  "SETTINGS" : {
       "path": "/settings",
       "title": "Settings"
     }
