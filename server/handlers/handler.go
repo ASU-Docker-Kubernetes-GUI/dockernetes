@@ -9,8 +9,10 @@ import (
 	"time"
 )
 
+// I don't like this, but I had to do em like that.
 var AppContext = context.Background()
 
+// I don't like this, but I had to do em like that.
 var dockerClient = client.NewDockerClient(&AppContext)
 
 // HandlePing returns a ping back to the person that requested it.
@@ -29,6 +31,7 @@ func HandleGetStatus(ctx *fiber.Ctx) error {
 	return ctx.JSON(resp)
 }
 
+// HandleGetAllContainers return the list of all containers from the docker client.
 func HandleGetAllContainers(ctx *fiber.Ctx) error {
 	resp, err := dockerClient.GetAllContainers()
 
@@ -37,7 +40,6 @@ func HandleGetAllContainers(ctx *fiber.Ctx) error {
 	}
 
 	return ctx.JSON(resp)
-
 }
 
 func HandleGetAllContainersByID(ctx *fiber.Ctx) error {
@@ -56,10 +58,6 @@ func HandleGetAllContainersByID(ctx *fiber.Ctx) error {
 	return ctx.JSON(resp)
 }
 
-type CreateContainerRequest struct {
-	ImageName     string `json:"imageName" xml:"imageName" form:"imageName" query:"imageName"`
-	containerName string `json:"containerName" xml:"containerName" form:"containerName" query:"containerName"`
-}
 
 func HandleCreateContainer(ctx *fiber.Ctx) error {
 	request := new(CreateContainerRequest)
